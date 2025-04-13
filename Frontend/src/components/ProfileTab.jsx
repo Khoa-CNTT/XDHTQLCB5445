@@ -3,7 +3,6 @@ import { getUser, updateUser } from '../APIs/userApi'; // Sử dụng API đã c
 import { jwtDecode } from "jwt-decode"; // Import đúng
 import { toast } from 'react-toastify'; // Sử dụng toast từ parent hoặc import riêng
 
-// Lấy URL gốc của backend từ biến môi trường hoặc đặt cứng (ít linh hoạt hơn)
 const BACKEND_URL = process.env.REACT_APP_API_KEY ? process.env.REACT_APP_API_KEY.replace("/api", "") : "http://localhost:4000";
 const DEFAULT_AVATAR = 'https://placehold.co/150?text=No+Image';
 

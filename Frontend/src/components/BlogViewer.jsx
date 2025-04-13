@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { getAllBlogs } from "../APIs/blogApi";
-import { Button, message } from "antd";
+import { Button, message, Pagination } from "antd";
+import { motion } from "framer-motion";
 
 const BlogViewer = () => {
     const [blogs, setBlogs] = useState([]);
     const [publishedBlogs, setPublishedBlogs] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 3;
 
     useEffect(() => {
         fetchBlogs();
@@ -27,34 +30,69 @@ const BlogViewer = () => {
         }
     };
 
-    return (
-        <div className="container mx-auto px-2 py-4 max-w-3xl">
-            <h1 className="text-2xl font-bold mb-6">Danh sách Bài Viết</h1>
-            <div className="all-blogs">
-                <h2 className="text-xl font-semibold mb-4">Tất cả Bài Viết</h2>
-                {blogs.map((blog) => (
-                    <div key={blog._id} className="fbPost border border-gray-300 rounded-lg mb-4 bg-white p-4 shadow-md">
-                        <div className="postHeader flex items-center mb-4">
-                            <img 
-                                src="https://randomuser.me/api/portraits/men/1.jpg" 
-                                alt="User Profile" 
-                                className="profilePic rounded-full w-12 h-12 mr-4"
-                            />
-                            <div className="userInfo text-sm">
-                                <h3 className="userName text-lg font-semibold">{blog.userId}</h3>
-                                <span>{new Date(blog.createdAt).toLocaleString()}</span>
-                            </div>
-                        </div>
+    const handlePageChange = (page) => {
+        setCurrentPage(page);
+    };
 
-                        <div className="postContent mt-2">
-                            <h2 className="postTitle text-xl font-semibold mb-2">{blog.title}</h2>
-                            <p className="postText text-base mb-4">{blog.content}</p>
-                            {blog.image && <img src={blog.image} alt="Post Image" className="postImage w-full max-w-xl h-auto rounded-lg mt-4" />}
+    const paginatedBlogs = publishedBlogs.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+    return (
+        <motion.div
+            className="container m-auto px-2 mt-7"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 1.2 }}
+        >
+            <h1
+                className="text-2xl text-[40px] font-bold mb-6 text-center"
+                style={{ fontFamily: "Dancing Script, serif" }}
+            >
+                Bài viết nổi bật
+            </h1>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-center px-10">
+                {paginatedBlogs.map((blog) => (
+                    <div
+                        key={blog._id}
+                        className="border border-gray-300 w-full rounded-lg bg-white p-4 shadow-md"
+                    >
+                        <div>
+                            <div className="flex items-center mb-4">
+                                <img
+                                    src="https://randomuser.me/api/portraits/men/1.jpg"
+                                    alt="User Profile"
+                                    className="rounded-full w-12 h-12 mr-4"
+                                />
+                                <div className="text-sm">
+                                    <h3 className="text-lg font-semibold">{blog.userId}</h3>
+                                    <span>{new Date(blog.createdAt).toLocaleString()}</span>
+                                </div>
+                            </div>
+                            <div className="mt-2">
+                                <h2 className="text-xl font-semibold mb-2">{blog.title}</h2>
+                                <p className="text-base h-[80px] mb-4 overflow-hidden text-ellipsis">{blog.content}</p>
+                                {blog.image && (
+                                    <img
+                                        src={blog.image}
+                                        alt="Post"
+                                        className="w-full h-[192px] object-cover rounded-lg mt-4"
+                                    />
+                                )}
+                            </div>
                         </div>
                     </div>
                 ))}
             </div>
-        </div>
+            <div className="flex justify-center mt-10">
+                <Pagination
+                    current={currentPage}
+                    pageSize={pageSize}
+                    total={publishedBlogs.length}
+                    onChange={handlePageChange}
+                    showSizeChanger={false}
+                />
+            </div>
+        </motion.div>
     );
 };
 

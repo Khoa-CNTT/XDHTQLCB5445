@@ -1,87 +1,155 @@
-import React, { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { FaSearch } from "react-icons/fa";
-
-const items = [
-  "ReactJS",
-  "TailwindCSS",
-  "JavaScript",
-  "TypeScript",
-  "Next.js",
-  "Node.js",
-  "MongoDB",
-  "Express.js",
-  "Firebase",
-  "GraphQL",
-];
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { getAllServices, getServiceById } from '../APIs/ServiceAPI';
+import { getProducts, getProductById } from '../APIs/ProductsApi';
+import { IoMdClose } from 'react-icons/io';
 
 const SearchComponent = ({ isVisible, onClose }) => {
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
-  const searchRef = useRef(null);
-  const handleSearch = (e) => {
-    const value = e.target.value;
-    setQuery(value);
-    if (value) {
-      setResults(
-        items.filter((item) => item.toLowerCase().includes(value.toLowerCase()))
+  const [query, setQuery] = useState('');
+  const [services, setServices] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Hàm tìm kiếm
+  const handleSearch = async () => {
+    if (!query.trim()) return;
+    setLoading(true);
+    setError(null);
+    try {
+      // Gọi API tìm kiếm dịch vụ
+      const serviceResponse = await getAllServices();
+      const filteredServices = serviceResponse.data.filter(service =>
+        service.name.toLowerCase().includes(query.toLowerCase())
       );
-    } else {
-      setResults([]);
+      setServices(filteredServices);
+
+      // Gọi API tìm kiếm sản phẩm
+      const productResponse = await getProducts();
+      const filteredProducts = productResponse.data.filter(product =>
+        product.ProductName.toLowerCase().includes(query.toLowerCase())
+      );
+      setProducts(filteredProducts);
+    } catch (err) {
+      setError('Không thể tải kết quả tìm kiếm.');
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (searchRef.current && !searchRef.current.contains(e.target)) {
-        onClose();
-      }
-    };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [onClose]);
+  // Xử lý khi người dùng nhấn Enter
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  // Xử lý khi query thay đổi
+  useEffect(() => {
+    if (query.length > 2) {
+      const timer = setTimeout(() => {
+        handleSearch();
+      }, 500);
+      return () => clearTimeout(timer);
+    } else {
+      setServices([]);
+      setProducts([]);
+    }
+  }, [query]);
+
+  if (!isVisible) return null;
+
   return (
-    <div className={`flex inset-0 w-[1534px] ml-[-380px]  items-center justify-center h-[64px] bg-black bg-opacity-30 p-6 transition-opacity ${
-      isVisible ? "block opacity-100" : "hidden opacity-0"
-    }`} ref={searchRef}>
-      <div className="relative w-[1534px] ml-[-40px] mr-[-40px] bg-black bg-opacity-30 h-[64px]">
-        <motion.div
-          initial={{ scale: 0.9 }}
-          animate={{ scale: 1 }}
-          className="relative flex top-2 items-center w-[620px] h-[50px] m-auto"
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-start pt-20">
+      <div className="bg-white w-full max-w-3xl rounded-lg shadow-lg p-6 relative">
+        {/* Nút đóng */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-600 hover:text-gray-800"
         >
-            <select className="ml-[1px] text-center w-[100px] h-[50px] rounded-l outline-none" name="" id="">
-              <option className="" value="">Sản phẩm</option>
-              <option value="">Dịch vụ</option>
-              <option value="">Tin tức</option>
-            </select>
+          <IoMdClose size={24} />
+        </button>
+
+        {/* Thanh tìm kiếm */}
+        <div className="mb-6">
           <input
             type="text"
             value={query}
-            onChange={handleSearch}
-            placeholder="Tìm kiếm..."
-            className="w-[620px] h-[50px] m-auto pl-10 text-lg border border-gray-300 rounded-s focus:outline-none  shadow-sm transition-all"
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Tìm kiếm sản phẩm hoặc dịch vụ..."
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-maincolor"
           />
-          <button className="w-[80px] h-[50px] flex items-center justify-center bg-red-800 rounded-r right-0 top-0">
-          <FaSearch className=" right-4 text-gray-400" />
-          </button>
-        </motion.div>
-        {results.length > 0 && (
-          <motion.ul
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="absolute w-full mt-2 bg-white border border-gray-200 rounded-lg shadow-lg"
-          >
-            {results.map((item, index) => (
-              <li
-                key={index}
-                className="p-3 cursor-pointer hover:bg-blue-100 transition-all"
-              >
-                {item}
-              </li>
-            ))}
-          </motion.ul>
-        )}
+        </div>
+
+        {/* Trạng thái tải */}
+        {loading && <p className="text-center text-gray-600">Đang tải...</p>}
+
+        {/* Lỗi */}
+        {error && <p className="text-center text-red-500">{error}</p>}
+
+        {/* Kết quả tìm kiếm */}
+        <div className="max-h-96 overflow-y-auto">
+          {/* Dịch vụ */}
+          {services.length > 0 && (
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">Dịch vụ</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {services.map((service) => (
+                  <Link
+                    key={service._id}
+                    to={`/service/${service._id}`}
+                    onClick={onClose}
+                    className="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                  >
+                    <img
+                      src={service.image || 'https://via.placeholder.com/50'}
+                      alt={service.name}
+                      className="w-12 h-12 object-cover rounded-lg mr-3"
+                    />
+                    <div>
+                      <p className="font-medium text-gray-800">{service.name}</p>
+                      <p className="text-sm text-gray-600">{service.price} đ</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Sản phẩm */}
+          {products.length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">Sản phẩm</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {products.map((product) => (
+                  <Link
+                    key={product._id}
+                    to={`/product/${product._id}`}
+                    onClick={onClose}
+                    className="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                  >
+                    <img
+                      src={product.ImagePD || 'https://via.placeholder.com/50'}
+                      alt={product.ProductName}
+                      className="w-12 h-12 object-cover rounded-lg mr-3"
+                    />
+                    <div>
+                      <p className="font-medium text-gray-800">{product.ProductName}</p>
+                      <p className="text-sm text-gray-600">{product.PricePD} đ</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Không có kết quả */}
+          {query && !loading && services.length === 0 && products.length === 0 && (
+            <p className="text-center text-gray-600">Không tìm thấy kết quả cho "{query}"</p>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -1,53 +1,83 @@
-import React, { useEffect, useState } from 'react';
-import { getProducts } from '../APIs/ProductsApi';
+import { Button, Tooltip } from "antd";
+import React, { useMemo, useState } from "react";
+import { FaCartPlus } from "react-icons/fa6";
+import { IoEyeOutline } from "react-icons/io5";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
-const OneProduct = () => {
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+const OneProduct = ({
+  title,
+  price,
+  description,
+  image,
+  productId,
+  onAddToCart,
+}) => {
+  const [arrow, setArrow] = useState("Show");
+  const mergedArrow = useMemo(() => {
+    if (arrow === "Hide") {
+      return false;
+    }
+    if (arrow === "Show") {
+      return true;
+    }
+    return {
+      pointAtCenter: true,
+    };
+  }, [arrow]);
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await getProducts();
-                if (response.success && Array.isArray(response.data)) {
-                    setProducts(response.data.map(item => ({ ...item, key: item._id })));
-                } else {
-                    throw new Error("Dữ liệu sản phẩm không hợp lệ!");
-                }
-            } catch (error) {
-                setError(error.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-        
-        fetchProducts();
-    }, []);
-
-    if (loading) return <p>Đang tải sản phẩm...</p>;
-    if (error) return <p>Lỗi: {error}</p>;
-
-    return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4 text-center">Chi tiết sản phẩm</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {products.map((item) => (
-                    <div key={item._id} className="border rounded-lg p-4 shadow-md bg-white">
-                        <h2 className="text-lg font-semibold">{item.ProductName}</h2>
-                        {item.ImagePD && <img src={item.ImagePD} alt={item.ProductName} className="w-[322px] h-[217px] rounded-lg mb-4" />}
-                        <p className="mt-2"><strong>Giá:</strong> {item.PricePD} VND</p>
-                        <p><strong>Mô tả:</strong> {item.DescriptionPD}</p>
-                        <p><strong>Số lượng:</strong> {item.StockQuantity}</p>
-                        <p><strong>Danh mục:</strong> {item.Category}</p>
-                    </div>
-                ))}
-            </div>
-            <button onClick={() => window.history.back()} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
-                Quay lại
-            </button>
+  return (
+    <div className="relative h-[500px] w-[320px] group  ">
+      <div className="bg-white h-[320px] w-[320px] p-4 border  group overflow-hidden relative transition-all duration-300 ">
+        <motion.img
+          whileHover={{ scale: 1.2 }}
+          src={image}
+          alt={title}
+          className="w-full h-56 object-cover rounded-lg transition-all duration-300 "
+        />
+        <div className="absolute top-3  right-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
+          <Tooltip
+            placement="leftTop"
+            title="Thêm sản phẩm"
+            arrow={mergedArrow}
+          >
+            <FaCartPlus
+              onClick={() => onAddToCart(productId)}
+              className="h-[28px] mt-[10px] w-[28px] border border-black  opacity-60"
+            />
+          </Tooltip>
+          <Tooltip
+            placement="leftTop"
+            title="Xem chi tiết sản phẩm"
+            arrow={mergedArrow}
+          >
+            <Link to={`/product/${productId}`}>
+              <IoEyeOutline className="h-[28px] mt-[10px] w-[28px]  border border-black opacity-60" />
+            </Link>
+          </Tooltip>
         </div>
-    );
+        <div className="absolute opacity-0 group-hover:opacity-100 transition-all duration-300">
+          <div className="absolute left-[-20px] top-[30px] mt-2 bg-slate-500 h-[60px] w-[350px] m-auto text-center">
+            <button
+              onClick={() => onAddToCart(productId)}
+              className="h-[40px] w-[350px] text-white "
+            >
+              Thêm vào giỏ hàng
+            </button>
+          </div>
+        </div>
+      </div>
+      <div className="absolute text-black  bottom-0 left-0 right-0 top-[350px] bg-white  text-center transition-all duration-300 group-hover:bottom-0">
+        <h3 className="text-xl font-semibold text-black mt-2 truncate max-w-xs">
+          {title}
+        </h3>
+        <p className="text-black mt-2 truncate max-w-xs">{description}</p>
+        <div className="flex justify-between items-center mt-4">
+          <span className="text-black font-bold">Giá:{price} VNĐ</span>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default OneProduct;

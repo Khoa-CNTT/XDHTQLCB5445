@@ -10,6 +10,8 @@ import reviewspRouter from "./routes/reviewspRoutes.js";
 import reviewdvRouter from "./routes/reviewdvRoutes.js";
 import blog from './routes/blogRoutes.js';
 import serviceRouter from "./routes/serviceRoutes.js"
+import branchRoutes from './routes/branchRoutes.js';
+import employeeRoutes from './routes/employeeRoutes.js';
 const app = express();
 const port = 4000;
 
@@ -25,11 +27,13 @@ connectDB();
 app.use('/images', express.static('uploads'))
 app.use('/api/product', productRouter)
 app.use('/api/user', userRouter)
-
+app.use('/api/cart', cartRouter)
 app.use('/api/reviewsp', reviewspRouter);
 app.use('/api/reviewdv', reviewdvRouter);
 app.use('/api/blog', blog);
 app.use('/api/service', serviceRouter)
+app.use('/api/branch', branchRoutes);
+app.use('/api/employee', employeeRoutes);
 
 app.get("/", (req, res) => {
     res.send("api")
