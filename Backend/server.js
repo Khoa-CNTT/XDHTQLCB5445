@@ -25,7 +25,7 @@ connectDB();
 app.use('/images', express.static('uploads'))
 app.use('/api/product', productRouter)
 app.use('/api/user', userRouter)
-app.use('/api/cart', cartRouter)
+
 app.use('/api/reviewsp', reviewspRouter);
 app.use('/api/reviewdv', reviewdvRouter);
 app.use('/api/blog', blog);
