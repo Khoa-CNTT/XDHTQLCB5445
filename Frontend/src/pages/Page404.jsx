@@ -14,7 +14,11 @@ export const Page404 = () => {
     title="404"
     style={{width: 278, margin: "auto"}}
     subTitle="Page không tồn tại vui lòng trở lại trang chủ."
+<<<<<<< HEAD
     extra={<Button onClick={backHome} type="primary">Back Home</Button>}
+=======
+    extra={<Button onClick={backHome} className='bg-blue-300'>Trở lại trang chủ</Button>}
+>>>>>>> c1949cc (Bao cao lan 3)
   />
     </>
   )

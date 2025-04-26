@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from 'react';
+<<<<<<< HEAD
 import { listUser, removeUser, updateUserRole } from '../../APIs/userApi';
 import { Button, Drawer, Input, Table, message, Select, Form } from 'antd';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { errorToast, successToast, toastContainer } from '../../utils/toast';
 
+=======
+import { listUser, updateUser, updateUserRole } from '../../APIs/userApi';
+import { Button, Drawer, Input, Table, Select, Form, Popconfirm, message } from 'antd';
+import {  EditOutlined } from '@ant-design/icons';
+import { FaLock, FaUnlock } from 'react-icons/fa6';
+>>>>>>> c1949cc (Bao cao lan 3)
 const { Option } = Select;
 
 const AccountManagement = () => {
@@ -21,17 +28,31 @@ const AccountManagement = () => {
   useEffect(() => {
     if (searchQuery) {
       const lowercasedQuery = searchQuery.toLowerCase();
+<<<<<<< HEAD
       const filtered = data.filter((item) =>
         (item.firstName?.toLowerCase().includes(lowercasedQuery) ||
          item.email?.toLowerCase().includes(lowercasedQuery))
       );
+=======
+      const filtered = data.filter((item) => {
+        const fullName = `${item.firstName || ''} ${item.lastName || ''}`.toLowerCase();
+        return (
+          fullName.includes(lowercasedQuery) ||
+          item.email?.toLowerCase().includes(lowercasedQuery)
+        );
+      });
+      
+>>>>>>> c1949cc (Bao cao lan 3)
       setFilteredData(filtered);
     } else {
       setFilteredData(data);
     }
   }, [searchQuery, data]);
+<<<<<<< HEAD
   
 
+=======
+>>>>>>> c1949cc (Bao cao lan 3)
   const fetchAccount = async () => {
     try {
       const res = await listUser();
@@ -43,7 +64,10 @@ const AccountManagement = () => {
         setFilteredData([]);
       }
     } catch (error) {
+<<<<<<< HEAD
       console.error('Lỗi khi tải danh sách user:', error);
+=======
+>>>>>>> c1949cc (Bao cao lan 3)
       setData([]);
       setFilteredData([]);
     }
@@ -54,6 +78,7 @@ const AccountManagement = () => {
     setIsEditOpen(true);
     form.setFieldsValue(user);
   };
+<<<<<<< HEAD
 
   const handleUpdateAccount = async () => {
     try {
@@ -108,6 +133,72 @@ const AccountManagement = () => {
       {toastContainer()}
       <h1>Quản lý tài khoản</h1>
       
+=======
+  const handleUpdateAccount = async () => {
+      const updatedRole = form.getFieldValue('role'); 
+      const updatedUser = { ...selectedUser, role: updatedRole };
+      await updateUserRole(updatedUser._id, { role: updatedRole });
+      message.success('Cập nhật thành công!');
+      setIsEditOpen(false);
+      fetchAccount(); 
+  };
+  
+  const handleToggleBlockAccount = async (user) => {
+    try {
+      const newStatus = !user.isEmailVerified;
+      await updateUser(user._id, { isEmailVerified: newStatus });
+      message.success(`Đã ${newStatus ? 'mở khóa' : 'chặn'} email cho tài khoản!`);
+      fetchAccount();
+    } catch {
+      message.error('Có lỗi khi cập nhật trạng thái xác thực email.');
+    }
+  };
+  const columns = [
+    {
+      title: 'Tên tài khoản',
+      key: 'fullName',
+      render: (_, record) => `${record.firstName || ''} ${record.lastName || ''}`.trim(),
+    },
+    { title: 'Email', dataIndex: 'email', key: 'email' },
+    { title: 'Vai trò', dataIndex: 'role', key: 'role' },
+    {
+      title: 'Email Đã xác thực',
+      dataIndex: 'isEmailVerified',
+      key: 'isEmailVerified',
+      render: v => v ? 'Đang hoạt động' : 'Đã bị chặn',
+    },
+    {
+      title: 'Hành động',
+      key: 'action',
+      width: 150,
+      render: (_, record) => (
+        <span>
+          <Popconfirm
+            title="Bạn có chắc chặn người dùng này không?"
+            onConfirm={() => handleToggleBlockAccount(record)}
+            okText="Xác nhận"
+            cancelText="Hủy"
+          >
+            <Button
+              style={{ color: record.isEmailVerified ? 'green' : 'red', marginLeft:'20px', fontSize: 20 }}
+
+            >
+              {record.isEmailVerified ? <FaUnlock  /> : <FaLock />}
+            </Button>
+          </Popconfirm>
+          <EditOutlined
+            style={{ color: 'blue', fontSize: 20, marginLeft: 16, cursor: 'pointer' }}
+            onClick={() => openEditDrawer(record)}
+          />
+        </span>
+      ),
+    },
+  ];
+  
+  return (
+    <div className="mt-3">
+      <h1>Quản lý tài khoản</h1>
+>>>>>>> c1949cc (Bao cao lan 3)
       <Input
         style={{ width: '300px', marginBottom: '16px', marginTop: '16px' , outline: 'none'}}
         placeholder="Tìm kiếm theo tên tài khoản hoặc email"
@@ -125,6 +216,10 @@ const AccountManagement = () => {
         title="Chỉnh sửa tài khoản"
         placement="right"
         closable
+<<<<<<< HEAD
+=======
+
+>>>>>>> c1949cc (Bao cao lan 3)
         onClose={() => setIsEditOpen(false)}
         open={isEditOpen}
       >
@@ -132,19 +227,36 @@ const AccountManagement = () => {
           <Form.Item
             name="firstName"
             label="Tên"
+<<<<<<< HEAD
             rules={[{ required: true, message: 'Vui lòng nhập tên người dùng' }]}
           >
             <Input />
+=======
+            // rules={[{ required: true, message: 'Vui lòng nhập tên người dùng' }]}
+          >
+            <Input  disabled />
+          </Form.Item>
+          <Form.Item
+            name="lastName"
+            label="Họ"
+            >
+            <Input disabled />
+>>>>>>> c1949cc (Bao cao lan 3)
           </Form.Item>
           <Form.Item
             name="email"
             label="Email"
+<<<<<<< HEAD
             rules={[
               { required: true, message: 'Vui lòng nhập email' },
               { type: 'email', message: 'Email không hợp lệ' },
             ]}
           >
             <Input />
+=======
+          >
+            <Input disabled />
+>>>>>>> c1949cc (Bao cao lan 3)
           </Form.Item>
           <Form.Item
             name="role"
@@ -163,7 +275,11 @@ const AccountManagement = () => {
             type="primary"
             block
             onClick={handleUpdateAccount}
+<<<<<<< HEAD
           >
+=======
+           >
+>>>>>>> c1949cc (Bao cao lan 3)
             Xác nhận cập nhật
           </Button>
         </Form>

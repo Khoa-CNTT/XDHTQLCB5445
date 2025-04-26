@@ -1,5 +1,9 @@
 import { createContext, useState, useEffect } from "react";
+<<<<<<< HEAD
 import { loginUser, getUser } from "../APIs/userApi";
+=======
+import { loginUser,getCurrentUser  } from "../APIs/userApi";
+>>>>>>> c1949cc (Bao cao lan 3)
 
 export const AuthContext = createContext();
 
@@ -19,6 +23,7 @@ export const AuthProvider = ({ children }) => {
 
     const fetchUserInfo = async (token) => {
         try {
+<<<<<<< HEAD
             const res = await getUser(token);
             setUser(res.user);
         } catch (error) {
@@ -29,6 +34,23 @@ export const AuthProvider = ({ children }) => {
             setLoading(false);
         }
     };
+=======
+          // Sử dụng endpoint mới thay vì endpoint cũ
+          const res = await getCurrentUser();
+          if (res.success) {
+            setUser(res.data); // Lưu ý: response trả về data chứ không phải user như trước
+          } else {
+            throw new Error(res.message);
+          }
+        } catch (error) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("role");
+          setUser(null);
+        } finally {
+          setLoading(false);
+        }
+      };
+>>>>>>> c1949cc (Bao cao lan 3)
 
     const login = async (credentials) => {
         try {

@@ -13,9 +13,21 @@ import { EmployeeManagement } from '../components/ComponentManagement/EmployeeMa
 import ServiceManagement from '../components/ComponentManagement/ServiceManagement';
 import ProductManagement from '../components/ComponentManagement/ProductManagement';
 import BlogManagement from '../components/ComponentManagement/BlogManagement';
+<<<<<<< HEAD
 import AccountManagement from '../components/ComponentManagement/AccountManagement';
 import Dashboard from '../components/ComponentManagement/Dashboard';
 import { IoHomeOutline } from 'react-icons/io5';
+=======
+import SlideBannerManagement from '../components/ComponentManagement/SlideBannerManagement';
+import OrderManagement from '../components/ComponentManagement/OrderManagement';
+import VoucherManagement from '../components/ComponentManagement/VoucherManagement';
+import AccountManagement from '../components/ComponentManagement/AccountManagement';
+import Dashboard from '../components/ComponentManagement/Dashboard';
+import { IoHomeOutline } from 'react-icons/io5';
+import BookingManagement from '../components/ComponentManagement/BookingManagement';
+import ReportForm from '../components/ComponentManagement/ReportForm';
+import ManagerManagement from '../components/ComponentManagement/ManagerManagement';
+>>>>>>> c1949cc (Bao cao lan 3)
 
 const items = [
   { key: 'dashboard', label: 'Dashboard', icon: <TbLayoutDashboard style={{fontSize:'24px'}} /> },
@@ -35,7 +47,13 @@ const items = [
       { key: 'service', label: 'Quản lý dịch vụ' },
       { key: 'product', label: 'Quản lý sản phẩm' },
       { key: 'order', label: 'Quản lý đơn hàng' },
+<<<<<<< HEAD
       { key: 'voucher', label: 'Quản lý voucher' },
+=======
+      { key: 'booking', label: 'Quản lý đặt lịch' },
+      { key: 'voucher', label: 'Quản lý voucher' },
+    
+>>>>>>> c1949cc (Bao cao lan 3)
     ],
   },
   {
@@ -45,6 +63,7 @@ const items = [
     children: [
       { key: 'banner', label: 'Banner trang chủ' },
       { key: 'account', label: 'Quản lý tài khoản' },
+<<<<<<< HEAD
       { key: 'brand', label: 'Quản lý thương hiệu' },
     ],
   },
@@ -52,6 +71,14 @@ const items = [
 
 
 
+=======
+      { key: 'brand', label: 'Quản lý chi nhánh' },
+      { key: 'manager', label: 'Quản lý Manager' },
+      { key: 'report', label: 'Báo cáo, thống kê' },
+    ],
+  },
+];
+>>>>>>> c1949cc (Bao cao lan 3)
 const Admin = () => {
   const navigate = useNavigate();
   const [current, setCurrent] = useState('1');
@@ -70,6 +97,11 @@ const Admin = () => {
         return <BlogManagement />;
       case 'brand':
         return <BrandManagement />;
+<<<<<<< HEAD
+=======
+      case 'banner':
+        return <SlideBannerManagement />;
+>>>>>>> c1949cc (Bao cao lan 3)
       case 'account':
         return <AccountManagement />;
       case 'employee':
@@ -78,6 +110,19 @@ const Admin = () => {
         return <ServiceManagement />;
       case 'product':
         return <ProductManagement />;
+<<<<<<< HEAD
+=======
+      case 'order':
+        return <OrderManagement />;
+      case 'voucher':
+        return <VoucherManagement />;
+      case 'booking':
+        return <BookingManagement />;
+      case 'report':
+        return <ReportForm />;
+      case 'manager':
+        return <ManagerManagement />;
+>>>>>>> c1949cc (Bao cao lan 3)
       default:
         return <Dashboard />;
     }
@@ -140,5 +185,8 @@ const Admin = () => {
     </div>
   );
 };
+<<<<<<< HEAD
 
+=======
+>>>>>>> c1949cc (Bao cao lan 3)
 export default Admin;

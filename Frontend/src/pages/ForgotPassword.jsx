@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import { forgotPassword, verifyCodeAndResetPassword } from "../APIs/userApi";
 import { useNavigate } from "react-router-dom";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
+<<<<<<< HEAD
+=======
+import { errorToast, successToast, toastContainer } from "../utils/toast";
+>>>>>>> c1949cc (Bao cao lan 3)
 
 export const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -35,10 +39,17 @@ export const ForgotPassword = () => {
         newPassword,
       });
       if (req.success) {
+<<<<<<< HEAD
         console.log("Đặt lại mật khẩu thành công!");
         navigate("/sign-in");
       } else {
         console.log("Đặt lại mật khẩu thất bại!");
+=======
+        successToast("Đặt lại mật khẩu thành công!");
+        navigate("/sign-in");
+      } else {
+        errorToast("Đặt lại mật khẩu thất bại!");
+>>>>>>> c1949cc (Bao cao lan 3)
       }
     } catch (error) {
       console.log("Lỗi trong quá trình đặt lại mật khẩu!");
@@ -46,12 +57,20 @@ export const ForgotPassword = () => {
   };
 
   return (
+<<<<<<< HEAD
     <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
+=======
+    <div className="flex items-center justify-center  bg-gray-50 p-4">
+    {toastContainer()}
+>>>>>>> c1949cc (Bao cao lan 3)
       <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
         <h1 className="text-2xl font-semibold text-center text-gray-700 mb-4">
           Lấy lại mật khẩu
         </h1>
+<<<<<<< HEAD
 
+=======
+>>>>>>> c1949cc (Bao cao lan 3)
         <form onSubmit={handleSubmit} className="space-y-4">
           <label className="block text-gray-600">Nhập email:</label>
           <input
@@ -100,7 +119,11 @@ export const ForgotPassword = () => {
               />
               <span
                 onClick={() => setShowPassword(!showPassword)}
+<<<<<<< HEAD
                 className="absolute right-4 top-11 text-gray-500 cursor-pointer"
+=======
+                className="absolute right-4 top-12 text-gray-500 cursor-pointer"
+>>>>>>> c1949cc (Bao cao lan 3)
               >
                 {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
               </span>

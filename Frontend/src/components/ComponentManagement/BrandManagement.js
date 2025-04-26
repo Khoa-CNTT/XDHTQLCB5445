@@ -6,7 +6,11 @@ import {
   removeBrand,
   updateBranch,
 } from "../../APIs/brand";
+<<<<<<< HEAD
 import { Button, Drawer, Modal, Table, message, Form, Input, Popconfirm } from "antd";
+=======
+import { Button, Drawer, Table, message, Form, Input, Popconfirm } from "antd";
+>>>>>>> c1949cc (Bao cao lan 3)
 
 export const BrandManagement = () => {
   const [dataBrand, setDataBrand] = useState([]);
@@ -25,7 +29,11 @@ export const BrandManagement = () => {
         setDataBrand([]);
       }
     } catch (error) {
+<<<<<<< HEAD
       console.error("Lỗi khi lấy danh sách chi nhánh:", error);
+=======
+    
+>>>>>>> c1949cc (Bao cao lan 3)
       setDataBrand([]);
     }
   };
@@ -61,8 +69,13 @@ export const BrandManagement = () => {
       setIsDrawerOpen(false);
       setIsModalOpen(false);
     } catch (error) {
+<<<<<<< HEAD
       console.error("Lỗi khi cập nhật chi nhánh:", error);
       message.error("Có lỗi xảy ra, vui lòng thử lại.");
+=======
+      
+      // errorToast("Vui lòng nhập đủ thông tin.");
+>>>>>>> c1949cc (Bao cao lan 3)
     }
   };
 
@@ -72,7 +85,11 @@ export const BrandManagement = () => {
       message.success("Xóa chi nhánh thành công!");
       fetchBrand();
     } catch (error) {
+<<<<<<< HEAD
       console.error("Lỗi khi xóa chi nhánh:", error);
+=======
+    
+>>>>>>> c1949cc (Bao cao lan 3)
       message.error("Có lỗi xảy ra khi xóa chi nhánh.");
     }
   };
@@ -155,14 +172,22 @@ export const BrandManagement = () => {
           <Button
             className="mt-4 bg-blue-500"
             type="primary"
+<<<<<<< HEAD
             onClick={() => setIsModalOpen(true)}
             block
           >
             Xác nhận cập nhật
+=======
+            onClick={handleUpdateBrand}
+            block
+          >
+            Xác nhận
+>>>>>>> c1949cc (Bao cao lan 3)
           </Button>
         </Form>
       </Drawer>
 
+<<<<<<< HEAD
       <Modal
         title="Xác nhận cập nhật"
         open={isModalOpen}
@@ -172,6 +197,8 @@ export const BrandManagement = () => {
         <p>Bạn có chắc chắn muốn cập nhật Brand với thông tin mới không?</p>
       </Modal>
 
+=======
+>>>>>>> c1949cc (Bao cao lan 3)
       <Table
         style={{ marginTop: 20 }}
         dataSource={dataBrand}

@@ -32,7 +32,10 @@ const SearchComponent = ({ isVisible, onClose }) => {
       setProducts(filteredProducts);
     } catch (err) {
       setError('Không thể tải kết quả tìm kiếm.');
+<<<<<<< HEAD
       console.error(err);
+=======
+>>>>>>> c1949cc (Bao cao lan 3)
     } finally {
       setLoading(false);
     }

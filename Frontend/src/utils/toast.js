@@ -33,6 +33,10 @@ const toastContainer = () => {
         rtl={false}
         pauseOnFocusLoss
         draggable
+<<<<<<< HEAD
+=======
+        className={"mt-[50px]"}
+>>>>>>> c1949cc (Bao cao lan 3)
         pauseOnHover
         />
     );

@@ -22,5 +22,10 @@ const authMiddleware = async (req, res, next) => {
         return res.status(401).json({ success: false, message: 'Token không hợp lệ' });
     }
 };
+<<<<<<< HEAD
  
+=======
+
+
+>>>>>>> c1949cc (Bao cao lan 3)
 export default authMiddleware;

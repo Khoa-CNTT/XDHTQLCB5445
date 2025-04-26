@@ -6,14 +6,61 @@
     "bookNow": "Đặt ngay",
     "bookings": "Đặt chỗ",
     "about": "Giới thiệu",
+<<<<<<< HEAD
     "contact": "Liên hệ",
+=======
+    "owner": "Nhóm sở hữu",
+>>>>>>> c1949cc (Bao cao lan 3)
     "searchPlaceholder": "Tìm kiếm...",
     "wishlist": "Danh sách yêu thích",
     "cart": "Giỏ hàng",
     "language": "Tiếng Việt",
+<<<<<<< HEAD
     "profile": "Hồ sơ",
     "logout": "Đăng xuất",
     "login": "Đăng nhập / Đăng ký"
+=======
+    "blogger": "Bài viết",
+    "profile": "Hồ sơ",
+    "logout": "Đăng xuất",
+    "login": "Đăng nhập / Đăng ký",
+    "voucher": "Mã giảm giá",
+    "admin": "Quản trị viên",
+    "featured blog": "Bài viết nổi bật",
+    "featured Services": "Dịch vụ nổi bật",
+    "featured Products": "Sản phẩm nổi bật",
+    "all": "Tất cả",
+    "tagline": "Đánh Thức Giác Quan – Khơi Dậy Năng Lượng",
+    "description": "Hãy để WinnerSpaBeauty chăm sóc bạn từ trong ra ngoài. Từ những liệu trình thư giãn đỉnh cao đến dịch vụ cá nhân hoá, chúng tôi cam kết mang đến cho bạn trải nghiệm xứng đáng nhất.",
+    "aboutTitle": "Về WinnerSpaBeauty",
+    "aboutDescription": "Hơn cả một spa – chúng tôi là điểm đến của sự cân bằng, chữa lành và tái tạo. Hành trình chăm sóc bản thân bắt đầu tại đây.",
+    "exploreTitle": "Khám Phá",
+    "servicesTitle": "Dịch Vụ Ưu Việt",
+    "connectTitle": "Kết Nối Với Chúng Tôi",
+    "consultAI": "Tư Vấn Làm Đẹp AI",
+    "loading": "Đang tải...",
+    "address": "Đâu đó tại Đà Nẵng chăng",
+    "phone": "+84 (555) 123-4567",
+    "email": "contact@WinnerSpaBeauty.com",
+    "hours": "Giờ mở cửa: 9:00 - 20:00 hàng ngày",
+    "quote": "\"Bạn xứng đáng được chăm sóc và yêu thương.\"",
+    "copyright": "© 2025 WinnerSpaBeauty. Tất cả các quyền được bảo lưu."
+  },
+  "products": {
+    "addToCartSuccess": "Sản phẩm đã được thêm vào giỏ hàng!",
+    "pleaseLogin": "Vui lòng đăng nhập để thêm vào giỏ hàng!",
+    "outOfStock": "Sản phẩm đã hết hàng!",
+    "noProducts": "Không có sản phẩm nào trong danh mục này."
+  },
+  "services": {
+    "noServices": "Không có dịch vụ nào trong danh mục này."
+  },
+  "blog": {
+    "featuredBlog": "Bài viết nổi bật",
+    "fetchError": "Lỗi tải danh sách bài viết!",
+    "noData": "Không lấy được dữ liệu blog!",
+    "pleaseLogin": "Vui lòng đăng nhập để xem bài viết!"
+>>>>>>> c1949cc (Bao cao lan 3)
   },
   "profileMenu": {
     "personalInfo": "Thông tin cá nhân",
@@ -42,10 +89,17 @@
       "oldPasswordIncorrect": "Mật khẩu cũ không chính xác. Vui lòng nhập lại.",
       "updateFailed": "Đã xảy ra lỗi. Vui lòng thử lại sau."
     },
+<<<<<<< HEAD
     "success": "Đổi mật khẩu thành công!" 
   },
   "dashboard": {
     "title": "Đơn Hàng Của Tôi", 
+=======
+    "success": "Đổi mật khẩu thành công!"
+  },
+  "dashboard": {
+    "title": "Đơn Hàng Của Tôi",
+>>>>>>> c1949cc (Bao cao lan 3)
     "totalOrders": "Tổng Đơn Hàng",
     "pendingOrders": "Đơn Chờ Xử Lý",
     "processingOrders": "Đơn Đang Xử Lý",
@@ -87,7 +141,11 @@
     "errorUserIdMissing": "Không thể cập nhật do thiếu ID người dùng."
   },
   "scheduleTab": {
+<<<<<<< HEAD
     "title": "Lịch Hẹn Nhân Viên - {{name}}", 
+=======
+    "title": "Lịch Hẹn Nhân Viên - {{name}}",
+>>>>>>> c1949cc (Bao cao lan 3)
     "filters": {
       "allServices": "Tất Cả Dịch Vụ",
       "massage": "Massage",
@@ -105,4 +163,8 @@
       "unknown": "Không Xác Định"
     }
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> c1949cc (Bao cao lan 3)

@@ -18,7 +18,11 @@ const ServiceDetail = () => {
         }
         setLoading(false);
       } catch (error) {
+<<<<<<< HEAD
         console.error('Lỗi khi lấy dịch vụ:', error);
+=======
+        ('Lỗi khi lấy dịch vụ:', error);
+>>>>>>> c1949cc (Bao cao lan 3)
         setLoading(false);
       }
     };

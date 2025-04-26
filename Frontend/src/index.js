@@ -4,10 +4,15 @@ import ReactDOM from 'react-dom/client';
 import './index.css'; // File CSS chính của bạn
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+<<<<<<< HEAD
 import { BrowserRouter as Router } from 'react-router-dom'; // Giả sử bạn đang dùng react-router
 import './components/i18n'; // <<< Import cấu hình i18next (quan trọng!)
 
 
+=======
+import { BrowserRouter as Router } from 'react-router-dom';
+import './components/i18n'; 
+>>>>>>> c1949cc (Bao cao lan 3)
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>

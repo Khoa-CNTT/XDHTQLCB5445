@@ -28,9 +28,20 @@ const SignUpPage = () => {
       return;
     }
     try {
+<<<<<<< HEAD
       await registerUser({ email, password });
       successToast("Đăng ký thành công!");
       navigate("/sign-in");
+=======
+      const res =await registerUser({ email, password });
+      if(res.success === true){
+        successToast("Đăng ký thành công! Chúng tôi đã gửi xác nhận vào Email.");
+        navigate("/sign-in");
+      }
+      else if(res.success === false){
+        errorToast("Email đã tồn tại!");
+      }
+>>>>>>> c1949cc (Bao cao lan 3)
     } catch (error) {
       successToast("Đăng ký thất bại!");
     }

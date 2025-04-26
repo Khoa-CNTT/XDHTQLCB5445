@@ -39,7 +39,11 @@ const removeProduct = async (req, res) => {
 // code da chinh sua
 const updateProduct = async (req, res) => {
   try {
+<<<<<<< HEAD
     const { id, ...updateData } = req.body; // Lấy ID từ body
+=======
+    const { id, ...updateData } = req.body;
+>>>>>>> c1949cc (Bao cao lan 3)
     const updatedProduct = await ProductModel.findByIdAndUpdate(id, updateData, { new: true });
 
     if (!updatedProduct) {
@@ -54,6 +58,7 @@ const updateProduct = async (req, res) => {
 };
 
 const getProductById = async (req, res) => {
+<<<<<<< HEAD
   try {
     const product = await ProductModel.findById(req.params.id);
     if (!product) {
@@ -66,3 +71,35 @@ const getProductById = async (req, res) => {
   }
 };
 export { addProduct, listProduct, removeProduct ,updateProduct, getProductById };
+=======
+  const productId = req.params.id;
+
+
+  try {
+      const product = await ProductModel.findById(productId);
+      
+      if (!product) {
+          return res.status(404).json({ success: false, message: 'Sản phẩm không tồn tại' });
+      }
+
+      res.status(200).json({ success: true,data: product });
+  } catch (error) {
+      console.error('Lỗi khi tìm sản phẩm:', error);
+      res.status(500).json({ success: false, message: 'Lỗi hệ thống' });
+  }
+};
+const searchProduct = async (req, res) => {
+  console.log('Request received with query:', req.query);
+  const { q } = req.query;
+  try {
+    const products = await ProductModel.find({
+      name: { $regex: q, $options: 'i' }
+    });
+    res.json({ success: true, data: products });
+  } catch (error) {
+    console.error('Error searching products:', error);
+    res.status(500).json({ success: false, message: 'Lỗi khi tìm kiếm sản phẩm' });
+  }
+};
+export { addProduct, listProduct, removeProduct ,updateProduct, getProductById, searchProduct};
+>>>>>>> c1949cc (Bao cao lan 3)
