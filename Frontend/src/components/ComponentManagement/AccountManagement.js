@@ -1,16 +1,8 @@
 import React, { useEffect, useState } from 'react';
-<<<<<<< HEAD
-import { listUser, removeUser, updateUserRole } from '../../APIs/userApi';
-import { Button, Drawer, Input, Table, message, Select, Form } from 'antd';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { errorToast, successToast, toastContainer } from '../../utils/toast';
-
-=======
 import { listUser, updateUser, updateUserRole } from '../../APIs/userApi';
 import { Button, Drawer, Input, Table, Select, Form, Popconfirm, message } from 'antd';
 import {  EditOutlined } from '@ant-design/icons';
 import { FaLock, FaUnlock } from 'react-icons/fa6';
->>>>>>> c1949cc (Bao cao lan 3)
 const { Option } = Select;
 
 const AccountManagement = () => {
@@ -28,12 +20,6 @@ const AccountManagement = () => {
   useEffect(() => {
     if (searchQuery) {
       const lowercasedQuery = searchQuery.toLowerCase();
-<<<<<<< HEAD
-      const filtered = data.filter((item) =>
-        (item.firstName?.toLowerCase().includes(lowercasedQuery) ||
-         item.email?.toLowerCase().includes(lowercasedQuery))
-      );
-=======
       const filtered = data.filter((item) => {
         const fullName = `${item.firstName || ''} ${item.lastName || ''}`.toLowerCase();
         return (
@@ -42,17 +28,11 @@ const AccountManagement = () => {
         );
       });
       
->>>>>>> c1949cc (Bao cao lan 3)
       setFilteredData(filtered);
     } else {
       setFilteredData(data);
     }
   }, [searchQuery, data]);
-<<<<<<< HEAD
-  
-
-=======
->>>>>>> c1949cc (Bao cao lan 3)
   const fetchAccount = async () => {
     try {
       const res = await listUser();
@@ -64,10 +44,6 @@ const AccountManagement = () => {
         setFilteredData([]);
       }
     } catch (error) {
-<<<<<<< HEAD
-      console.error('Lỗi khi tải danh sách user:', error);
-=======
->>>>>>> c1949cc (Bao cao lan 3)
       setData([]);
       setFilteredData([]);
     }
@@ -78,62 +54,6 @@ const AccountManagement = () => {
     setIsEditOpen(true);
     form.setFieldsValue(user);
   };
-<<<<<<< HEAD
-
-  const handleUpdateAccount = async () => {
-    try {
-      const values = await form.validateFields();
-      await updateUserRole(selectedUser._id, values);
-      successToast('Cập nhật role thành công!');
-      setIsEditOpen(false);
-      fetchAccount();
-    } catch (error) {
-      console.error('Lỗi khi cập nhật role:', error);
-      errorToast('Có lỗi xảy ra, vui lòng thử lại.');
-    }
-  };
-
-  const handleDeleteAccount = async (userId) => {
-    try {
-      const res = await removeUser(userId);
-      if (res.success) {
-        message.success('Xóa tài khoản thành công!');
-        fetchAccount();
-      }
-    } catch (error) {
-      console.error(error);
-      message.error('Có lỗi xảy ra khi xóa tài khoản.');
-    }
-  };
-
-  const columns = [
-    { title: 'Tên tài khoản', dataIndex: 'firstName', key: 'firstName' },
-    { title: 'Email', dataIndex: 'email', key: 'email' },
-    { title: 'Vai trò', dataIndex: 'role', key: 'role' },
-    {
-      title: 'Hành động',
-      key: 'action',
-      render: (_, record) => (
-        <div>
-          <DeleteOutlined
-            style={{ color: 'red', fontSize: '20px', cursor: 'pointer' }}
-            onClick={() => handleDeleteAccount(record._id)}
-          />
-          <EditOutlined
-            style={{ color: 'blue', fontSize: '20px', marginLeft: '10px', cursor: 'pointer' }}
-            onClick={() => openEditDrawer(record)}
-          />
-        </div>
-      ),
-    },
-  ];
-
-  return (
-    <div className="mt-3">
-      {toastContainer()}
-      <h1>Quản lý tài khoản</h1>
-      
-=======
   const handleUpdateAccount = async () => {
       const updatedRole = form.getFieldValue('role'); 
       const updatedUser = { ...selectedUser, role: updatedRole };
@@ -198,7 +118,6 @@ const AccountManagement = () => {
   return (
     <div className="mt-3">
       <h1>Quản lý tài khoản</h1>
->>>>>>> c1949cc (Bao cao lan 3)
       <Input
         style={{ width: '300px', marginBottom: '16px', marginTop: '16px' , outline: 'none'}}
         placeholder="Tìm kiếm theo tên tài khoản hoặc email"
@@ -216,10 +135,7 @@ const AccountManagement = () => {
         title="Chỉnh sửa tài khoản"
         placement="right"
         closable
-<<<<<<< HEAD
-=======
 
->>>>>>> c1949cc (Bao cao lan 3)
         onClose={() => setIsEditOpen(false)}
         open={isEditOpen}
       >
@@ -227,11 +143,6 @@ const AccountManagement = () => {
           <Form.Item
             name="firstName"
             label="Tên"
-<<<<<<< HEAD
-            rules={[{ required: true, message: 'Vui lòng nhập tên người dùng' }]}
-          >
-            <Input />
-=======
             // rules={[{ required: true, message: 'Vui lòng nhập tên người dùng' }]}
           >
             <Input  disabled />
@@ -241,22 +152,12 @@ const AccountManagement = () => {
             label="Họ"
             >
             <Input disabled />
->>>>>>> c1949cc (Bao cao lan 3)
           </Form.Item>
           <Form.Item
             name="email"
             label="Email"
-<<<<<<< HEAD
-            rules={[
-              { required: true, message: 'Vui lòng nhập email' },
-              { type: 'email', message: 'Email không hợp lệ' },
-            ]}
-          >
-            <Input />
-=======
           >
             <Input disabled />
->>>>>>> c1949cc (Bao cao lan 3)
           </Form.Item>
           <Form.Item
             name="role"
@@ -275,11 +176,7 @@ const AccountManagement = () => {
             type="primary"
             block
             onClick={handleUpdateAccount}
-<<<<<<< HEAD
-          >
-=======
            >
->>>>>>> c1949cc (Bao cao lan 3)
             Xác nhận cập nhật
           </Button>
         </Form>

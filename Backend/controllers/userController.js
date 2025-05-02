@@ -11,8 +11,6 @@ const createToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 };
 
-<<<<<<< HEAD
-=======
 const sendConfirmationEmail = async (email, verificationCode) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -36,7 +34,6 @@ const sendConfirmationEmail = async (email, verificationCode) => {
 
   await transporter.sendMail(mailOptions);
 };
->>>>>>> c1949cc (Bao cao lan 3)
 const registerUser = async (req, res) => {
   const { password, email } = req.body;
   try {
@@ -47,10 +44,7 @@ const registerUser = async (req, res) => {
     if (existingUser) {
       return res.json({ success: false, message: "Email đã tồn tại" });
     }
-<<<<<<< HEAD
-=======
 
->>>>>>> c1949cc (Bao cao lan 3)
     if (
       !validator.isStrongPassword(password, {
         minLength: 8,
@@ -65,38 +59,23 @@ const registerUser = async (req, res) => {
           "Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, số và ký tự đặc biệt",
       });
     }
-<<<<<<< HEAD
-=======
 
->>>>>>> c1949cc (Bao cao lan 3)
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const newUser = new userModel({
       email,
       password: hashedPassword,
-<<<<<<< HEAD
-=======
       verificationCode: generateVerificationCode(), // Lưu mã xác nhận vào cơ sở dữ liệu
       verificationCodeExpires: Date.now() + 3600000, // Thời gian hết hạn 1 giờ
->>>>>>> c1949cc (Bao cao lan 3)
     });
 
     const user = await newUser.save();
 
-<<<<<<< HEAD
-    // Tạo token JWT
-    const token = createToken(user._id);
-
-    res.json({
-      success: true,
-      token,
-=======
     // Gửi email xác nhận
     await sendConfirmationEmail(email, newUser.verificationCode);
 
     res.json({
       success: true,
->>>>>>> c1949cc (Bao cao lan 3)
       message: "Đăng ký thành công! Kiểm tra email để kích hoạt tài khoản.",
     });
   } catch (error) {
@@ -104,8 +83,6 @@ const registerUser = async (req, res) => {
     res.json({ success: false, message: error });
   }
 };
-<<<<<<< HEAD
-=======
 const confirmEmail = async (req, res) => {
   const { verificationCode } = req.params;
 
@@ -144,7 +121,6 @@ const confirmEmail = async (req, res) => {
 };
 
 
->>>>>>> c1949cc (Bao cao lan 3)
 //login
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
@@ -158,15 +134,12 @@ const loginUser = async (req, res) => {
         .json({ success: false, message: "User doesn't exist" });
     }
 
-<<<<<<< HEAD
-=======
     if (!user.isEmailVerified) {
       return res
         .status(400)
         .json({ success: false, message: "Email not verified" });
     }
 
->>>>>>> c1949cc (Bao cao lan 3)
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res
@@ -194,10 +167,7 @@ const loginUser = async (req, res) => {
       .json({ success: false, message: "Internal Server Error" });
   }
 };
-<<<<<<< HEAD
-=======
 
->>>>>>> c1949cc (Bao cao lan 3)
 // quên  mk
 // Tạo mã xác nhận (OTP)
 const generateVerificationCode = () => {
@@ -245,10 +215,7 @@ const quenmk = async (req, res) => {
     // Tạo mã xác nhận và gửi qua email
     const verificationCode = generateVerificationCode();
     user.verificationCode = verificationCode;
-<<<<<<< HEAD
-=======
     user.verificationCodeExpires = Date.now() + 10 * 60 * 1000;
->>>>>>> c1949cc (Bao cao lan 3)
     await user.save();
 
     await sendVerificationCode(email, verificationCode);
@@ -333,47 +300,6 @@ const changePassword = async (req, res) => {
   const userId = req.user?.id;
 
   // Kiểm tra xem có userId không (middleware có chạy đúng không)
-<<<<<<< HEAD
-  if (!userId) {
-    console.error("Lỗi nghiêm trọng: Không tìm thấy userId trong request sau khi qua authMiddleware.");
-    return res.status(401).json({ success: false, message: "Yêu cầu không được xác thực." });
-  }
-  // Kiểm tra dữ liệu đầu vào
-  if (!oldPassword || !newPassword) {
-    return res.status(400).json({ success: false, message: "Vui lòng cung cấp mật khẩu cũ và mật khẩu mới." });
-  }
-
-  try {
-    const user = await userModel.findById(userId);
-    if (!user) {
-      console.warn("Người dùng không tìm thấy với ID:", userId); // Ghi log cảnh báo
-      return res.status(404).json({ success: false, message: "Không tìm thấy người dùng." });
-    }
-
-    const isMatch = await bcrypt.compare(oldPassword, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ success: false, message: "Mật khẩu cũ không chính xác." });
-    }
-
-    if (!validator.isStrongPassword(newPassword, { minLength: 8, minNumbers: 1, minUppercase: 1, minSymbols: 1 })) {
-      return res.status(400).json({ success: false, message: "Mật khẩu mới phải có ít nhất 8 ký tự, gồm chữ hoa, số và ký tự đặc biệt." });
-    }
-    // Không nên đổi nếu mật khẩu mới trùng mật khẩu cũ
-    if (oldPassword === newPassword) {
-      return res.status(400).json({ success: false, message: "Mật khẩu mới không được trùng với mật khẩu cũ." });
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(newPassword, salt);
-    user.password = hashedPassword;
-    await user.save();
-
-    console.log("Mật khẩu đã được cập nhật thành công cho user:", userId);
-    res.status(200).json({ success: true, message: "Mật khẩu đã được thay đổi thành công." });
-  } catch (error) {
-    console.error(`Lỗi trong quá trình đổi mật khẩu cho user ${userId}:`, error);
-    res.status(500).json({ success: false, message: "Lỗi hệ thống. Vui lòng thử lại sau." });
-=======
    if (!userId) {
       console.error("Lỗi nghiêm trọng: Không tìm thấy userId trong request sau khi qua authMiddleware.");
       return res.status(401).json({ success: false, message: "Yêu cầu không được xác thực." });
@@ -413,7 +339,6 @@ const changePassword = async (req, res) => {
   } catch (error) {
       console.error(`Lỗi trong quá trình đổi mật khẩu cho user ${userId}:`, error);
       res.status(500).json({ success: false, message: "Lỗi hệ thống. Vui lòng thử lại sau." });
->>>>>>> c1949cc (Bao cao lan 3)
   }
 };
 const listUser = async (req, res) => {
@@ -438,23 +363,6 @@ const removeUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-<<<<<<< HEAD
-    const updateData = { ...req.body };
-    if (req.file) {
-      updateData.image = req.file.filename;
-    }
-
-    const updatedUser = await userModel.findByIdAndUpdate(req.params.id, updateData, { new: true });
-
-    if (!updatedUser) {
-      return res.status(404).json({ success: false, message: "Không tìm thấy người dùng để cập nhật" });
-    }
-
-    res.json({ success: true, data: updatedUser });
-  } catch (error) {
-    console.error("Lỗi cập nhật thông tin:", error);
-    res.status(500).json({ success: false, message: "Lỗi cập nhật thông tin người dùng", error: error.message });
-=======
       const updateData = { ...req.body };  
       if (req.file) {
           updateData.image = req.file.filename;
@@ -470,7 +378,6 @@ const updateUser = async (req, res) => {
   } catch (error) {
       console.error("Lỗi cập nhật thông tin:", error);
       res.status(500).json({ success: false, message: "Lỗi cập nhật thông tin người dùng", error: error.message });
->>>>>>> c1949cc (Bao cao lan 3)
   }
 };
 
@@ -528,19 +435,11 @@ const getCurrentUser = async (req, res) => {
   try {
     // Lấy userId từ req.user đã được authMiddleware gắn vào
     const userId = req.user.id;
-<<<<<<< HEAD
-
-    if (!userId) {
-      return res.status(401).json({
-        success: false,
-        message: "Không xác thực được người dùng"
-=======
     
     if (!userId) {
       return res.status(401).json({ 
         success: false, 
         message: "Không xác thực được người dùng" 
->>>>>>> c1949cc (Bao cao lan 3)
       });
     }
 
@@ -549,23 +448,6 @@ const getCurrentUser = async (req, res) => {
       .select("firstName lastName email phone address dateOfBirth image role");
 
     if (!user) {
-<<<<<<< HEAD
-      return res.status(404).json({
-        success: false,
-        message: "Không tìm thấy người dùng"
-      });
-    }
-
-    res.json({
-      success: true,
-      data: user
-    });
-  } catch (error) {
-    console.error("Lỗi khi lấy thông tin người dùng:", error);
-    res.status(500).json({
-      success: false,
-      message: "Lỗi server khi lấy thông tin người dùng"
-=======
       return res.status(404).json({ 
         success: false, 
         message: "Không tìm thấy người dùng" 
@@ -581,13 +463,10 @@ const getCurrentUser = async (req, res) => {
     res.status(500).json({ 
       success: false, 
       message: "Lỗi server khi lấy thông tin người dùng" 
->>>>>>> c1949cc (Bao cao lan 3)
     });
   }
 };
 
-<<<<<<< HEAD
-=======
 
 const saveVoucher = async (req, res) => {
   const { voucherId } = req.body;
@@ -663,7 +542,6 @@ const getSavedVouchers = async (req, res) => {
 };
 
 
->>>>>>> c1949cc (Bao cao lan 3)
 export {
   registerUser,
   loginUser,
@@ -676,11 +554,8 @@ export {
   getUserInfo,
   updateUserRole,
   getCurrentUser,
-<<<<<<< HEAD
-=======
   saveVoucher,
   removeSavedVoucher,
   getSavedVouchers,
   confirmEmail 
->>>>>>> c1949cc (Bao cao lan 3)
 };

@@ -14,10 +14,6 @@ const upload=multer({storage:storage})
 serviceRouter.get("/list", getAllServices);
 serviceRouter.get("/:id", getServiceById);
 serviceRouter.post("/add",upload.single("image"), createService);
-<<<<<<< HEAD
-serviceRouter.put("/update/:id", updateService);
-=======
 serviceRouter.put("/update", updateService);
->>>>>>> c1949cc (Bao cao lan 3)
 serviceRouter.delete("/delete/:id", deleteService);
 export default serviceRouter;

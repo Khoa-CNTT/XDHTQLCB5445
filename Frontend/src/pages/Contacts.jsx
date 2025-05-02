@@ -1,17 +1,3 @@
-<<<<<<< HEAD
-import React from 'react'
-
-const Contacts = () => {
-  return (
-    <div>
-      
-      <h1 className='text-center font-bold text-3xl'>Contact</h1>
-    </div>
-  )
-}
-
-export default Contacts
-=======
 import React from 'react';
 
 const Contacts = () => {
@@ -58,4 +44,3 @@ const Contacts = () => {
 };
 
 export default Contacts;
->>>>>>> c1949cc (Bao cao lan 3)

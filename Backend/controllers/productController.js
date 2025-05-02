@@ -39,11 +39,7 @@ const removeProduct = async (req, res) => {
 // code da chinh sua
 const updateProduct = async (req, res) => {
   try {
-<<<<<<< HEAD
-    const { id, ...updateData } = req.body; // Lấy ID từ body
-=======
     const { id, ...updateData } = req.body;
->>>>>>> c1949cc (Bao cao lan 3)
     const updatedProduct = await ProductModel.findByIdAndUpdate(id, updateData, { new: true });
 
     if (!updatedProduct) {
@@ -58,20 +54,6 @@ const updateProduct = async (req, res) => {
 };
 
 const getProductById = async (req, res) => {
-<<<<<<< HEAD
-  try {
-    const product = await ProductModel.findById(req.params.id);
-    if (!product) {
-      return res.status(404).json({ success: false, message: 'Product not found' });
-    }
-    res.json({ success: true, data: product });
-  } catch (error) {
-    console.log(error);
-    res.json({ success: false, message: 'Error retrieving product' });
-  }
-};
-export { addProduct, listProduct, removeProduct ,updateProduct, getProductById };
-=======
   const productId = req.params.id;
 
 
@@ -102,4 +84,3 @@ const searchProduct = async (req, res) => {
   }
 };
 export { addProduct, listProduct, removeProduct ,updateProduct, getProductById, searchProduct};
->>>>>>> c1949cc (Bao cao lan 3)

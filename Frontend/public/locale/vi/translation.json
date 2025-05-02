@@ -6,20 +6,11 @@
     "bookNow": "Đặt ngay",
     "bookings": "Đặt chỗ",
     "about": "Giới thiệu",
-<<<<<<< HEAD
-    "contact": "Liên hệ",
-=======
     "owner": "Nhóm sở hữu",
->>>>>>> c1949cc (Bao cao lan 3)
     "searchPlaceholder": "Tìm kiếm...",
     "wishlist": "Danh sách yêu thích",
     "cart": "Giỏ hàng",
     "language": "Tiếng Việt",
-<<<<<<< HEAD
-    "profile": "Hồ sơ",
-    "logout": "Đăng xuất",
-    "login": "Đăng nhập / Đăng ký"
-=======
     "blogger": "Bài viết",
     "profile": "Hồ sơ",
     "logout": "Đăng xuất",
@@ -60,7 +51,6 @@
     "fetchError": "Lỗi tải danh sách bài viết!",
     "noData": "Không lấy được dữ liệu blog!",
     "pleaseLogin": "Vui lòng đăng nhập để xem bài viết!"
->>>>>>> c1949cc (Bao cao lan 3)
   },
   "profileMenu": {
     "personalInfo": "Thông tin cá nhân",
@@ -89,17 +79,10 @@
       "oldPasswordIncorrect": "Mật khẩu cũ không chính xác. Vui lòng nhập lại.",
       "updateFailed": "Đã xảy ra lỗi. Vui lòng thử lại sau."
     },
-<<<<<<< HEAD
-    "success": "Đổi mật khẩu thành công!" 
-  },
-  "dashboard": {
-    "title": "Đơn Hàng Của Tôi", 
-=======
     "success": "Đổi mật khẩu thành công!"
   },
   "dashboard": {
     "title": "Đơn Hàng Của Tôi",
->>>>>>> c1949cc (Bao cao lan 3)
     "totalOrders": "Tổng Đơn Hàng",
     "pendingOrders": "Đơn Chờ Xử Lý",
     "processingOrders": "Đơn Đang Xử Lý",
@@ -141,11 +124,7 @@
     "errorUserIdMissing": "Không thể cập nhật do thiếu ID người dùng."
   },
   "scheduleTab": {
-<<<<<<< HEAD
-    "title": "Lịch Hẹn Nhân Viên - {{name}}", 
-=======
     "title": "Lịch Hẹn Nhân Viên - {{name}}",
->>>>>>> c1949cc (Bao cao lan 3)
     "filters": {
       "allServices": "Tất Cả Dịch Vụ",
       "massage": "Massage",
@@ -163,8 +142,4 @@
       "unknown": "Không Xác Định"
     }
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> c1949cc (Bao cao lan 3)

@@ -1,11 +1,8 @@
 import EmployeeModel from "../models/employeeModel.js";
 import UserModel from "../models/userModel.js"; 
 import BranchModel from "../models/branchModel.js"; 
-<<<<<<< HEAD
-=======
 import BookingModel from "../models/bookingModel.js";
 
->>>>>>> c1949cc (Bao cao lan 3)
 
 // Thêm mới nhân viên
 const addEmployee = async (req, res) => {
@@ -101,17 +98,10 @@ const getAllEmployees = async (req, res) => {
                 }
             },
             {
-<<<<<<< HEAD
-                $unwind: '$Branch'              // Giải nén mảng chi nhánh
-            },
-            {
-                $unwind: '$User'                // Giải nén mảng người dùng
-=======
                 $unwind: '$Branch'             
             },
             {
                 $unwind: '$User'               
->>>>>>> c1949cc (Bao cao lan 3)
             }
         ]);
 
@@ -121,11 +111,6 @@ const getAllEmployees = async (req, res) => {
         res.status(500).json({ message: "Lỗi khi lấy danh sách nhân viên", error });
     }
 };
-<<<<<<< HEAD
-
-
-export { addEmployee, updateEmployee, deleteEmployee, getAllEmployees };
-=======
 // Thêm hàm này vào employeeController.js
 const getEmployeeBookings = async (req, res) => {
     try {
@@ -159,4 +144,3 @@ const getEmployeeBookings = async (req, res) => {
 
 
 export { addEmployee, updateEmployee, deleteEmployee, getAllEmployees,getEmployeeBookings };
->>>>>>> c1949cc (Bao cao lan 3)

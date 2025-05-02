@@ -48,11 +48,7 @@ const BlogManagement = () => {
         message.error("Không lấy được dữ liệu blog!");
       }
     } catch (error) {
-<<<<<<< HEAD
-      console.error("Error fetching blogs: ", error);
-=======
       
->>>>>>> c1949cc (Bao cao lan 3)
       message.error("Lỗi tải danh sách bài viết!");
     }
     setIsTableLoading(false);
@@ -97,11 +93,7 @@ const BlogManagement = () => {
       handleCloseDrawer();
       fetchBlogs();
     } catch (error) {
-<<<<<<< HEAD
-      console.error(error);
-=======
       
->>>>>>> c1949cc (Bao cao lan 3)
       message.error("Lỗi khi thêm/cập nhật bài viết!");
     }
   };
@@ -112,11 +104,7 @@ const BlogManagement = () => {
       message.success("Xóa bài viết thành công!");
       fetchBlogs();
     } catch (error) {
-<<<<<<< HEAD
-      console.error(error);
-=======
       
->>>>>>> c1949cc (Bao cao lan 3)
       message.error("Lỗi khi xóa bài viết!");
     }
   };
@@ -133,11 +121,7 @@ const BlogManagement = () => {
       try {
         file.preview = await getBase64(file.originFileObj);
       } catch (error) {
-<<<<<<< HEAD
-        console.error("Lỗi khi đọc file: ", error);
-=======
       
->>>>>>> c1949cc (Bao cao lan 3)
         message.error("Không thể đọc file ảnh!");
       }
     }

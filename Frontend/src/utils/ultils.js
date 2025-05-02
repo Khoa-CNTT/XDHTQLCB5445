@@ -3,10 +3,6 @@ export const getBase64 = (file) =>
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => resolve(reader.result);
-<<<<<<< HEAD
-      reader.onerror = (error) => reject(error);
-    });
-=======
       reader.onerror = (error) => reject
     });
     export const renderOptions = (arr) =>{
@@ -25,4 +21,3 @@ export const getBase64 = (file) =>
       })
       return results
   }
->>>>>>> c1949cc (Bao cao lan 3)

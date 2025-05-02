@@ -1,11 +1,7 @@
 import axios from "axios";
 
-<<<<<<< HEAD
-const API_BASE_URL = 'http://localhost:4000/api/';
-=======
 const API_BASE_URL = 'https://backend-fu3h.onrender.com/api/';
 // const API_BASE_URL = "http://localhost:4000/api"; // Replace with your local URL
->>>>>>> c1949cc (Bao cao lan 3)
 
 const service = axios.create({
     baseURL: API_BASE_URL,

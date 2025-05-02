@@ -1,16 +1,3 @@
-<<<<<<< HEAD
-import React from 'react'
-
-const About = () => {
-  return (
-    <div>
-      <h1 className='text-center font-bold text-3xl'>About</h1>
-    </div>
-  )
-}
-
-export default About
-=======
 import React, { useEffect, useState } from 'react';
 import { listBranch } from '../APIs/brand';
 import Header from '../components/Header';
@@ -75,4 +62,3 @@ const About = () => {
 };
 
 export default About;
->>>>>>> c1949cc (Bao cao lan 3)

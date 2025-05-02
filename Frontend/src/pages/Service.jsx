@@ -1,17 +1,3 @@
-<<<<<<< HEAD
-import React from 'react'
-
-const Service = () => {
-  return (
-    <div>
-      
-      <h1 className='text-center font-bold text-3xl'>Service</h1>
-    </div>
-  )
-}
-
-export default Service
-=======
 import React, { useEffect, useState } from "react";
 import OneService from "../components/OneService";
 import { getAllServices } from "../APIs/ServiceAPI";
@@ -218,4 +204,3 @@ const Service = () => {
 };
 
 export default Service;
->>>>>>> c1949cc (Bao cao lan 3)
