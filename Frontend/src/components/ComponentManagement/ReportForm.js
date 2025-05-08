@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Card, Select, DatePicker, Button, Form, Row, Col, Statistic, Table, Progress, Avatar, Spin, message } from 'antd';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import dayjs from 'dayjs';
-import { listOrder } from '../../APIs/orderApi';
+import { listAllOrders } from '../../APIs/orderApi';
 import { getAllBookings } from '../../APIs/booking';
 import anhSpa from '../../img/anhspa.png';
-import ExportExcel from './ExportExcel'; 
+import ExportExcel from './ExportExcel';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -68,10 +68,10 @@ const ReportForm = () => {
 
   const processStaffPerformance = async (bookings, dateRange) => {
     try {
-      const staffMap = {}; 
+      const staffMap = {};
       bookings.forEach(booking => {
         console.log("Booking staff/employee info:", booking.employee);
-        
+
         const staffInfo = booking.staff || booking.employee;
         if (!staffInfo) return;
         let staffId = staffInfo._id || (staffInfo.UserID && staffInfo.UserID._id);
@@ -82,7 +82,7 @@ const ReportForm = () => {
         } else if (staffInfo.name) {
           employeeName = staffInfo.name;
         }
-  
+
         if (!staffMap[staffId]) {
           staffMap[staffId] = {
             id: staffId,
@@ -99,15 +99,15 @@ const ReportForm = () => {
             averageRating: 0,
           };
         }
-  
+
         // Cập nhật thống kê
         staffMap[staffId].totalBookings += 1;
-  
+
         const status = booking.status;
         if (status === 'completed' || status === 'Đã hoàn thành') {
           staffMap[staffId].completedBookings += 1;
           staffMap[staffId].totalRevenue += (booking.totalAmount || 0);
-  
+
           if (booking.rating) {
             staffMap[staffId].totalRatings += booking.rating;
             staffMap[staffId].ratingCount += 1;
@@ -116,25 +116,25 @@ const ReportForm = () => {
           staffMap[staffId].cancelledBookings += 1;
         }
       });
-  
+
       const staffWithBookings = Object.values(staffMap).filter(staff => staff.totalBookings > 0);
-  
+
       // Tính toán các chỉ số
       staffWithBookings.forEach(staff => {
         staff.completionRate = staff.totalBookings > 0
           ? (staff.completedBookings / staff.totalBookings) * 100
           : 0;
-  
+
         staff.averageRating = staff.ratingCount > 0
           ? (staff.totalRatings / staff.ratingCount)
           : 0;
-  
+
         staff.completionRate = Number(staff.completionRate.toFixed(2));
         staff.averageRating = Number(staff.averageRating.toFixed(1));
       });
-  
+
       return staffWithBookings.sort((a, b) => b.completedBookings - a.completedBookings);
-  
+
     } catch (err) {
       console.error("Error processing staff data:", err);
       return [];
@@ -161,7 +161,7 @@ const ReportForm = () => {
     setLoading(true);
     try {
       if (type === 'order') {
-        const res = await listOrder();
+        const res = await listAllOrders();
         if (res.success) {
           const filtered = res.data.filter(order => {
             const date = dayjs(order.orderDate);
@@ -198,7 +198,7 @@ const ReportForm = () => {
           const date = dayjs(booking.updatedAt);
           return date.isAfter(from) && date.isBefore(to);
         });
-      
+
         const revenueByDate = {};
         filtered.forEach(booking => {
           const dateStr = dayjs(booking.updatedAt).format('DD/MM/YYYY');
@@ -209,7 +209,7 @@ const ReportForm = () => {
           name: date,
           value: amount,
         }));
-      
+
         const totalRevenue = pieData.reduce((sum, item) => sum + item.value, 0);
         const top = getTopUsedServices(filtered);
         setReportData({
@@ -222,7 +222,7 @@ const ReportForm = () => {
         setStaffPerformance([]);
         setStaffBookingCounts([]);
       }
-       else if (type === 'staff') {
+      else if (type === 'staff') {
         const bookingsRes = await getAllBookings();
 
         const filtered = bookingsRes.filter(booking => {
@@ -375,30 +375,7 @@ const ReportForm = () => {
         </div>
       ) : (
         <>
-          {(reportData.quantity > 0 || reportData.revenue > 0) && (
-            <Row gutter={16} style={{ marginTop: 24 }}>
-              <Col span={8}>
-                <Card>
-                  <Statistic
-                    title={form.getFieldValue('type') === 'staff' ? "Tổng lịch hẹn hoàn thành" : "Tổng số lượng"}
-                    value={reportData.quantity}
-                    valueStyle={{ color: '#3f8600' }}
-                  />
-                </Card>
-              </Col>
-              <Col span={8}>
-                <Card>
-                  <Statistic
-                    title="Tổng doanh thu"
-                    value={reportData.revenue}
-                    suffix="₫"
-                    valueStyle={{ color: '#cf1322' }}
-                  />
-                </Card>
-              </Col>
-            </Row>
-          )}
-{/* Phần order */}
+
           {form.getFieldValue('type') === 'order' && revenuePieData.length > 0 && (
             <Card title="Biểu đồ doanh thu theo ngày" style={{ marginTop: 30 }}>
               <ResponsiveContainer width="100%" height={400}>

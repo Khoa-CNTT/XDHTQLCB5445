@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://backend-fu3h.onrender.com/api/blog";
-// const API_URL = "http://localhost:4000/api/blog";
+ const API_URL = "http://localhost:4000/api/blog";
 
 export const getAllBlogs = async () => {
     try {

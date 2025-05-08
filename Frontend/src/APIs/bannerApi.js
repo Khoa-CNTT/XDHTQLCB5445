@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const API_URL = "https://backend-fu3h.onrender.com/api/slide";
-// const API_URL = "http://localhost:4000/api/slide";
+//const API_URL = "https://backend-fu3h.onrender.com/api/slide";
+const API_URL = "http://localhost:4000/api/slide";
 export const getAllSlides = async () => {
     const res = await axios.get(API_URL);
     return res.data;
@@ -17,6 +17,6 @@ export const deleteSlide = async (id) => {
     return true;
 };
 export const updateSlide = async (id, data) => {
-        const response = await axios.put(`${API_URL}/update/${id}`, data);
-        return response.data;
+    const response = await axios.put(`${API_URL}/update/${id}`, data);
+    return response.data;
 };

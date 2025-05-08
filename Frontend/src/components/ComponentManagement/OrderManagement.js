@@ -4,7 +4,7 @@ import {
   Badge, message, Space, Empty
 } from "antd";
 import { EditOutlined, ReloadOutlined } from "@ant-design/icons";
-import { listOrder, updateOrderStatus } from "../../APIs/orderApi";
+import { listAllOrders, updateOrderStatus } from "../../APIs/orderApi";
 import { getUser } from "../../APIs/userApi";
 
 const OrderManagement = () => {
@@ -58,7 +58,7 @@ const OrderManagement = () => {
     }));
 
     try {
-      const response = await listOrder();
+      const response = await listAllOrders();
       if (response.success && Array.isArray(response.data)) {
         const processedOrders = response.data.map(item => ({
           ...item,

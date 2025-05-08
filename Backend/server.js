@@ -17,6 +17,9 @@ import blog from './routes/blogRoutes.js';
 import bookingRouter from "./routes/bookingRoutes.js";
 import serviceRouter from "./routes/serviceRoutes.js";
 import slideBannerRouter from "./routes/bannerRoutes.js";
+import vnpayRouter from './routes/vnpayRoutes.js';
+import categoryRoutes from './routes/categoryRoutes.js';
+
 
 const app = express();
 const port = 4000;
@@ -43,6 +46,9 @@ app.use('/api/blog', blog);
 app.use('/api/booking', bookingRouter);
 app.use('/api/service', serviceRouter);
 app.use('/api/slide', slideBannerRouter);
+app.use('/api/vnpay', vnpayRouter);
+app.use('/api/categories', categoryRoutes);
+
 
 app.get("/", (req, res) => {
   res.send("api");

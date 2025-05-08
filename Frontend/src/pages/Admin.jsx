@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Menu} from 'antd';
+import { Button, Menu } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import {
   MenuFoldOutlined,
@@ -22,19 +22,20 @@ import { IoHomeOutline } from 'react-icons/io5';
 import BookingManagement from '../components/ComponentManagement/BookingManagement';
 import ReportForm from '../components/ComponentManagement/ReportForm';
 import ManagerManagement from '../components/ComponentManagement/ManagerManagement';
+import CategoryManagement from '../components/ComponentManagement/CategoryManagement';
 
 const items = [
-  { key: 'dashboard', label: 'Dashboard', icon: <TbLayoutDashboard style={{fontSize:'24px'}} /> },
+  { key: 'dashboard', label: 'Dashboard', icon: <TbLayoutDashboard style={{ fontSize: '24px' }} /> },
   {
     key: 'home',
     label: 'Trang người dùng',
-    icon: <IoHomeOutline style={{fontSize:'24px'}} />,
+    icon: <IoHomeOutline style={{ fontSize: '24px' }} />,
 
   },
   {
     key: 'manager',
     label: 'Manager',
-    icon: <GrUserManager style={{fontSize:'24px'}} />,
+    icon: <GrUserManager style={{ fontSize: '24px' }} />,
     children: [
       { key: 'blog', label: 'Quản lý BLog' },
       { key: 'employee', label: 'Quản lý nhân viên' },
@@ -43,13 +44,14 @@ const items = [
       { key: 'order', label: 'Quản lý đơn hàng' },
       { key: 'booking', label: 'Quản lý đặt lịch' },
       { key: 'voucher', label: 'Quản lý voucher' },
-    
+      { key: 'category', label: 'Quản lý danh mục' },
+
     ],
   },
   {
     key: 'admin',
     label: 'Admin',
-    icon: <RiAdminLine style={{fontSize:'24px'}} />,
+    icon: <RiAdminLine style={{ fontSize: '24px' }} />,
     children: [
       { key: 'banner', label: 'Banner trang chủ' },
       { key: 'account', label: 'Quản lý tài khoản' },
@@ -97,6 +99,8 @@ const Admin = () => {
         return <ReportForm />;
       case 'manager':
         return <ManagerManagement />;
+      case 'category':
+        return <CategoryManagement />;
       default:
         return <Dashboard />;
     }
@@ -136,7 +140,7 @@ const Admin = () => {
         </Button>
         <Menu
           onClick={handleOnClick}
-          style={{ width: '100%', flex: 1, marginTop: 30, marginRight:15 }}
+          style={{ width: '100%', flex: 1, marginTop: 30, marginRight: 15 }}
           defaultSelectedKeys={['dashboard']}
           selectedKeys={[current]}
           mode="inline"
