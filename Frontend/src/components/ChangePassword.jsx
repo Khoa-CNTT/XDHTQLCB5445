@@ -110,7 +110,7 @@ function ChangePasswordTab() {
           onClick={handlePasswordChange}
           disabled={isLoading}
           className={`w-full py-2 text-white rounded-lg transition 
-            ${isLoading ? 'bg-pink-300 cursor-not-allowed' : 'bg-pink-500 hover:bg-pink-600'}
+            ${isLoading ? 'bg-pink-300 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'}
           `}
         >
           {isLoading ? '🔄 Đang cập nhật...' : 'Cập Nhật'}

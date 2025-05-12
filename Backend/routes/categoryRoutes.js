@@ -17,4 +17,3 @@ categoryRoutes.get('/get/:id', getCategoryById);
 categoryRoutes.get('/search', searchCategory);
 
 export default categoryRoutes;
-

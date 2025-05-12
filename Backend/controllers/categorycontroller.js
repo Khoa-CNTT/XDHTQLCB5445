@@ -12,7 +12,6 @@ const addCategory = async (req, res) => {
 
 }
 
-//danh sach danh muc
 const listCategory = async (req, res) => {
     try {
         const categories = await categoryModel.find();
@@ -25,11 +24,10 @@ const listCategory = async (req, res) => {
 
 }
 
-//update danh muc
 const updateCategory = async (req, res) => {
     try {
         const { id, ...updateData } = req.body;
-        const updateCategory = await categoryModel.findByIdAndUpdate(id, update, { new: true })
+        const updateCategory = await categoryModel.findByIdAndUpdate(id, updateData, { new: true })
         if (!updateCategory) {
             return res.status(404).json({ success: false, message: "Không tìm thấy danh mục" })
         }
@@ -41,7 +39,6 @@ const updateCategory = async (req, res) => {
     }
 }
 
-//xoa danh muc
 const removeCategory = async (req, res) => {
     try {
         const category = await categoryModel.findByIdAndDelete(req.body.id);
@@ -55,7 +52,6 @@ const removeCategory = async (req, res) => {
     }
 };
 
-//lay danh muc theo id
 const getCategoryById = async (req, res) => {
     try {
         const category = await categoryModel.findById(req.params.id);
@@ -95,6 +91,5 @@ const searchCategory = async (req, res) => {
 };
 
 export { addCategory, listCategory, updateCategory, removeCategory, getCategoryById, searchCategory };
-
 
 

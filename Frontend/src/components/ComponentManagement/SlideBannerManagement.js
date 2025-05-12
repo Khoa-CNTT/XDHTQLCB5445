@@ -156,6 +156,14 @@ const SlideBannerManagement = () => {
         img && <img width={100} height={50} src={img} alt="Slide" />,
     },
     {
+      title: "Trạng thái",
+      dataIndex: "isActive",
+      key: "isActive",
+      render: (isActive) => (
+        <Switch checked={isActive} disabled style={{ marginLeft: 10 }} />
+      ),
+    },
+    {
       title: "Hành động",
       render: (_, record) => (
         <span>
@@ -253,13 +261,13 @@ const SlideBannerManagement = () => {
             )}
           </Form.Item>
 
-          {/* <Form.Item
+          <Form.Item
             label="Hiển thị"
             name="isActive"
             valuePropName="checked"
           >
             <Switch />
-          </Form.Item> */}
+          </Form.Item>
 
           <Form.Item>
             <Button className="bg-blue-500" block htmlType="submit">

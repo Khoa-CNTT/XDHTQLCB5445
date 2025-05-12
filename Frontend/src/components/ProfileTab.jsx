@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getUser, updateUser } from '../APIs/userApi';
 import { jwtDecode } from 'jwt-decode';
+import { toast } from 'react-toastify';
 import { CLOUDINARY_UPLOAD_URL, CLOUDINARY_UPLOAD_PRESET } from '../utils/cloudinaryConfig';
 import { errorToast, successToast, toastContainer } from '../utils/toast';
 
@@ -73,27 +74,49 @@ const ProfileTab = () => {
     setPreviewImage(URL.createObjectURL(file));
   };
 
+  const handleInputChange = (e, field) => {
+    const value = e.target.value;
+    setFormData({ ...formData, [field]: value });
+  };
+
   const handleUpdate = async () => {
     if (!user?._id) return;
-
+  
+    // Check for required fields
     const requiredFields = ['firstName', 'lastName', 'phoneNumber', 'address', 'dateOfBirth'];
     const isAnyFieldEmpty = requiredFields.some((field) => !formData[field].trim());
     if (isAnyFieldEmpty) {
       errorToast('Vui lòng nhập đầy đủ thông tin');
       return;
     }
-
+  
+    // Name validation
+    const nameRegex = /^[\p{L}\s]*$/u;
+    if (!nameRegex.test(formData.firstName) || !nameRegex.test(formData.lastName)) {
+      toast.error('Họ và tên chỉ được chứa chữ cái và khoảng trắng');
+      return;
+    }
+  
+    // Phone number validation
     const phoneRegex = /^\d{10}$/;
     if (!phoneRegex.test(formData.phoneNumber)) {
       if (formData.phoneNumber.length < 10) {
-        errorToast('Số điện thoại phải đúng 10 chữ số');
+        toast.error('Số điện thoại không hợp lệ vui lòng nhập đúng định dạng 10 số');
         return;
       } else if (formData.phoneNumber.length > 10) {
-        errorToast('Số điện thoại không được vượt quá 10 chữ số');
+        toast.error('Số điện thoại không hợp lệ vui lòng nhập đúng định dạng 10 số');
         return;
       }
     }
-
+  
+    // Date of birth validation - không được lớn hơn ngày hiện tại
+    const currentDate = new Date();
+    const selectedDate = new Date(formData.dateOfBirth);
+    if (selectedDate > currentDate) {
+      toast.error('Ngày sinh không thể lớn hơn ngày hiện tại');
+      return;
+    }
+  
     setIsLoading(true);
     try {
       let imageUrl = user.image;
@@ -125,15 +148,14 @@ const ProfileTab = () => {
   if (!user)
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-pink-400"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-700"></div>
       </div>
     );
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto px-4 py-2">
+    <div className="space-y-8 max-w-6xl mx-auto px-4 py-8">
       {toastContainer()}
       <div className="text-center mb-8">
-        
       </div>
 
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
@@ -146,11 +168,11 @@ const ProfileTab = () => {
                 <img
                   src={previewImage}
                   alt="Avatar"
-                  className="w-40 h-40 rounded-full object-cover border-4 border-pink-100 shadow-lg"
+                  className="w-40 h-40 rounded-full object-cover border-4 border-gray-200 shadow-lg"
                   onError={() => setPreviewImage(DEFAULT_AVATAR)}
                 />
                 {isEditing && (
-                  <label className="absolute bottom-2 right-2 bg-pink-500 text-white rounded-full p-2 cursor-pointer hover:bg-pink-600 transition shadow-md">
+                  <label className="absolute bottom-2 right-2 bg-gray-700 text-white rounded-full p-2 cursor-pointer hover:bg-gray-800 transition shadow-md">
                     <input type="file" className="hidden" onChange={handleImageChange} accept="image/*" />
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
@@ -170,24 +192,24 @@ const ProfileTab = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-1">Họ</label>
                       <input
                         value={formData.firstName}
-                        onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:border-pink-400 transition"
+                        onChange={(e) => handleInputChange(e, 'firstName')}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 transition"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Tên</label>
                       <input
                         value={formData.lastName}
-                        onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:border-pink-400 transition"
+                        onChange={(e) => handleInputChange(e, 'lastName')}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 transition"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Số điện thoại</label>
                       <input
                         value={formData.phoneNumber}
-                        onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:border-pink-400 transition"
+                        onChange={(e) => handleInputChange(e, 'phoneNumber')}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 transition"
                       />
                     </div>
                     <div>
@@ -195,8 +217,8 @@ const ProfileTab = () => {
                       <input
                         type="date"
                         value={formData.dateOfBirth}
-                        onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:border-pink-400 transition"
+                        onChange={(e) => handleInputChange(e, 'dateOfBirth')}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 transition"
                       />
                     </div>
                   </div>
@@ -204,8 +226,8 @@ const ProfileTab = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-1">Địa chỉ</label>
                     <input
                       value={formData.address}
-                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:border-pink-400 transition"
+                      onChange={(e) => handleInputChange(e, 'address')}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-gray-600 transition"
                     />
                   </div>
                   <div className="flex justify-end space-x-4 pt-4">
@@ -218,7 +240,7 @@ const ProfileTab = () => {
                     <button
                       onClick={handleUpdate}
                       disabled={isLoading}
-                      className={`px-6 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition font-medium ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                      className={`px-6 py-2 bg-blue-700 text-white rounded-lg hover:bg-ble-800 transition font-medium ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
                     >
                       {isLoading ? (
                         <span className="flex items-center justify-center">
@@ -261,7 +283,7 @@ const ProfileTab = () => {
                   <div className="flex justify-center pt-6">
                     <button
                       onClick={() => setIsEditing(true)}
-                      className="px-8 py-3 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition font-medium text-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+                      className="px-8 py-3 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition font-medium text-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
                     >
                       Chỉnh sửa thông tin
                     </button>

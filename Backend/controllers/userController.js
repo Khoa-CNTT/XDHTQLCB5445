@@ -27,7 +27,7 @@ const sendConfirmationEmail = async (email, verificationCode) => {
     html: `
       <p>Chào bạn,</p>
       <p>Cảm ơn bạn đã đăng ký tài khoản. Vui lòng nhấp vào nút dưới đây để xác nhận tài khoản của bạn:</p>
-      <a href="http://localhost:4000/api/user/confirm/${verificationCode}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block;">Xác nhận email</a>
+      <a href="http://tvd2003.id.vn/api/user/confirm/${verificationCode}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block;">Xác nhận email</a>
       <p>Chúc bạn một ngày tốt lành!</p>
     `,
   };
@@ -35,11 +35,12 @@ const sendConfirmationEmail = async (email, verificationCode) => {
   await transporter.sendMail(mailOptions);
 };
 const registerUser = async (req, res) => {
-  const { password, email } = req.body;
+  const { password, email, role = "user" } = req.body; 
   try {
     if (!validator.isEmail(email)) {
       return res.json({ success: false, message: "Email không hợp lệ" });
     }
+
     const existingUser = await userModel.findOne({ email });
     if (existingUser) {
       return res.json({ success: false, message: "Email đã tồn tại" });
@@ -62,11 +63,13 @@ const registerUser = async (req, res) => {
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+
     const newUser = new userModel({
       email,
       password: hashedPassword,
-      verificationCode: generateVerificationCode(), // Lưu mã xác nhận vào cơ sở dữ liệu
-      verificationCodeExpires: Date.now() + 3600000, // Thời gian hết hạn 1 giờ
+      role,
+      verificationCode: generateVerificationCode(),
+      verificationCodeExpires: Date.now() + 3600000,
     });
 
     const user = await newUser.save();
@@ -74,15 +77,16 @@ const registerUser = async (req, res) => {
     // Gửi email xác nhận
     await sendConfirmationEmail(email, newUser.verificationCode);
 
-    res.json({
+    return res.json({
       success: true,
       message: "Đăng ký thành công! Kiểm tra email để kích hoạt tài khoản.",
     });
   } catch (error) {
     console.error(error);
-    res.json({ success: false, message: error });
+    return res.json({ success: false, message: "Lỗi máy chủ" });
   }
 };
+
 const confirmEmail = async (req, res) => {
   const { verificationCode } = req.params;
 
@@ -383,12 +387,12 @@ const updateUser = async (req, res) => {
 
 const updateUserRole = async (req, res) => {
   const { id } = req.params;
-  const { firstName, lastName, phone, address, email, dateOfBirth, role } =
+  const {role } =
     req.body;
   try {
     const updatedUser = await userModel.findByIdAndUpdate(
       id,
-      { firstName, lastName, phone, address, email, dateOfBirth, role },
+      { role },
       { new: true }
     );
     if (!updatedUser) {
@@ -466,8 +470,6 @@ const getCurrentUser = async (req, res) => {
     });
   }
 };
-
-
 const saveVoucher = async (req, res) => {
   const { voucherId } = req.body;
   const userId = req.user?.id;
@@ -542,6 +544,7 @@ const getSavedVouchers = async (req, res) => {
 };
 
 
+
 export {
   registerUser,
   loginUser,
@@ -557,5 +560,5 @@ export {
   saveVoucher,
   removeSavedVoucher,
   getSavedVouchers,
-  confirmEmail 
+  confirmEmail ,
 };

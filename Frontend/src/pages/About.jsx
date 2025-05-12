@@ -31,7 +31,7 @@ const About = () => {
         </div>
 
         <div className="container mx-auto z-10">
-          <h2 className="text-3xl font-bold text-center text-maincolor mb-10">Hệ Thống Chi Nhánh SerenitySpa</h2>
+          <h2 className="text-3xl font-bold text-center text-maincolor mb-10">Hệ Thống Chi Nhánh Winner Beauty Spa</h2>
           <div className="grid grid-row-1 sm:grid-row-2 lg:grid-row-3 gap-8">
             {branches.map((branch, index) => (
               <div

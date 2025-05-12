@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {
   Button, Drawer, Table, Select, Input, Spin,
-  Form, InputNumber, DatePicker, Popconfirm,
-  message,
+  Form, DatePicker, Popconfirm, message,
 } from 'antd';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, ReloadOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import {
   addVoucher, getVouchers, updateVoucher, deleteVoucher,
@@ -19,19 +18,32 @@ const VoucherManagement = () => {
   const [loading, setLoading] = useState(false);
   const [isTableLoading, setIsTableLoading] = useState(true);
   const [voucherCodeFilter, setVoucherCodeFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all'); // all | active | expired
   const [form] = Form.useForm();
 
   useEffect(() => {
     fetchVouchers();
-  }, [voucherCodeFilter]);
+  }, [voucherCodeFilter, statusFilter]);
 
   const fetchVouchers = async () => {
     setIsTableLoading(true);
     try {
       const data = await getVouchers();
+      const now = dayjs();
+
       const filtered = data
         .map(v => ({ ...v, key: v._id }))
-        .filter(v => v.code.toLowerCase().includes(voucherCodeFilter.toLowerCase()));
+        .filter(v => v.code.toLowerCase().includes(voucherCodeFilter.toLowerCase()))
+        .filter(v => {
+          if (statusFilter === 'active') {
+            return dayjs(v.endDate).isAfter(now);
+          }
+          if (statusFilter === 'expired') {
+            return dayjs(v.endDate).isBefore(now);
+          }
+          return true;
+        });
+
       setVouchers(filtered);
     } catch {
       message.error('Không thể tải danh sách voucher.');
@@ -61,36 +73,29 @@ const VoucherManagement = () => {
     form.resetFields();
   };
 
-  const validateForm = (values) => {
-    const { discount, maximumDiscount, minimumAmount, startDate, endDate, usageLimit } = values;
-
-    if (discount <= 0 || discount >= 100) {
-      message.error('Giảm giá phải lớn hơn 0% và nhỏ hơn 100%.');
-      return false;
-    }
-    if (maximumDiscount <= 0) {
-      message.error('Giảm tối đa phải lớn hơn 0.');
-      return false;
-    }
-    if (minimumAmount < 0) {
-      message.error('Đơn tối thiểu phải lớn hơn hoặc bằng 0.');
-      return false;
-    }
-    if (!startDate || !endDate || startDate >= endDate) {
-      message.error('Ngày kết thúc phải sau ngày bắt đầu.');
-      return false;
-    }
-    if (usageLimit <= 0) {
-      message.error('Giới hạn sử dụng phải lớn hơn 0.');
-      return false;
-    }
-    return true;
-  };
-
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      if (!validateForm(values)) return;
+      if (values.startDate.isAfter(values.endDate)) {
+        message.error('Ngày bắt đầu đang lớn hơn ngày kết thúc!');
+        return;
+      }
+      if (values.usageLimit < 1) {
+        message.error('Giới hạn sử dụng phải lớn hơn 0!');
+        return;
+      }
+      if (values.discount < 1 || values.discount > 99) {
+        message.error('Giảm giá phải nằm trong khoảng 1-99%!');
+        return;
+      }
+      if (values.maximumDiscount < 1) {
+        message.error('Giảm tối đa phải lớn hơn 0!');
+        return;
+      }
+      if (values.minimumAmount < 0) {
+        message.error('Đơn tối thiểu không được âm!');
+        return;
+      }
 
       const payload = {
         ...values,
@@ -109,6 +114,7 @@ const VoucherManagement = () => {
       closeDrawer();
       fetchVouchers();
     } catch (error) {
+      // handle validate error silently
     } finally {
       setLoading(false);
     }
@@ -124,11 +130,79 @@ const VoucherManagement = () => {
     }
   };
 
+  //   { title: 'Mã', dataIndex: 'code' },
+  //   { title: 'Giảm giá (%)', dataIndex: 'discount' ,
+      
+  //   },
+  //   { title: 'Giảm tối đa', dataIndex: 'maximumDiscount' },
+  //   { title: 'Đơn tối thiểu', dataIndex: 'minimumAmount' },
+  //   {
+  //     title: 'Ngày bắt đầu',
+  //     dataIndex: 'startDate',
+  //     render: (date) => new Date(date).toLocaleDateString(),
+  //   },
+  //   {
+  //     title: 'Ngày kết thúc',
+  //     dataIndex: 'endDate',
+  //     render: (date) => new Date(date).toLocaleDateString(),
+  //   },
+  //   { title: 'Giới hạn sử dụng', dataIndex: 'usageLimit' },
+  //   {
+  //     title: 'Số lượt dùng',
+  //     dataIndex: 'usageLeft',
+  //     render: (v) => v ?? 0,
+  //   },
+  //   {
+  //     title: 'Áp dụng cho',
+  //     dataIndex: 'applicableTo',
+  //     render: (v) => v === 'all' ? 'Tất cả' : v === 'products' ? 'Sản phẩm' : 'Dịch vụ',
+  //   },
+  //   {
+  //     title: 'Hành động',
+  //     render: (record) => (
+  //       <div>
+  //         <Popconfirm
+  //           title="Xác nhận xóa voucher này?"
+  //           onConfirm={() => handleDeleteVoucher(record._id)}
+  //           okText="Xóa"
+  //           cancelText="Hủy"
+  //         >
+  //           <DeleteOutlined style={{ color: 'red', fontSize: 20, cursor: 'pointer' }} />
+  //         </Popconfirm>
+  //         <EditOutlined
+  //           style={{ color: 'blue', fontSize: 20, marginLeft: 10, cursor: 'pointer' }}
+  //           onClick={() => openEditDrawer(record)}
+  //         />
+  //       </div>
+  //     ),
+  //   },
+  // ];
   const columns = [
     { title: 'Mã', dataIndex: 'code' },
-    { title: 'Giảm giá (%)', dataIndex: 'discount' },
-    { title: 'Giảm tối đa', dataIndex: 'maximumDiscount' },
-    { title: 'Đơn tối thiểu', dataIndex: 'minimumAmount' },
+    {
+      title: 'Giảm giá (%)',
+      dataIndex: 'discount',
+      filters: [...new Set(vouchers.map(v => v.discount))].map(discount => ({
+        text: `${discount}%`,
+        value: discount,
+      })),
+      onFilter: (value, record) => record.discount === value,
+    },
+    
+    { title: 'Giảm tối đa', dataIndex: 'maximumDiscount',
+      filters: [...new Set(vouchers.map(v => v.maximumDiscount))].map(maximumDiscount => ({
+        text: `${maximumDiscount}`,
+        value: maximumDiscount,
+      })),
+      onFilter: (value, record) => record.maximumDiscount === value,
+     },
+    { title: 'Đơn tối thiểu', dataIndex: 'minimumAmount',
+      filters: [...new Set(vouchers.map(v => v.minimumAmount))].map(minimumAmount => ({
+        text: `${minimumAmount}`,
+        value: minimumAmount,
+      })),
+      onFilter: (value, record) => record.minimumAmount === value,
+     },
     {
       title: 'Ngày bắt đầu',
       dataIndex: 'startDate',
@@ -139,7 +213,13 @@ const VoucherManagement = () => {
       dataIndex: 'endDate',
       render: (date) => new Date(date).toLocaleDateString(),
     },
-    { title: 'Giới hạn sử dụng', dataIndex: 'usageLimit' },
+    { title: 'Giới hạn sử dụng', dataIndex: 'usageLimit' ,
+      filters: [...new Set(vouchers.map(v => v.usageLimit))].map(usageLimit => ({
+        text: `${usageLimit}`,
+        value: usageLimit,
+      })),
+      onFilter: (value, record) => record.usageLimit === value,
+    },
     {
       title: 'Số lượt dùng',
       dataIndex: 'usageLeft',
@@ -148,7 +228,14 @@ const VoucherManagement = () => {
     {
       title: 'Áp dụng cho',
       dataIndex: 'applicableTo',
-      render: (v) => v === 'all' ? 'Tất cả' : v === 'products' ? 'Sản phẩm' : 'Dịch vụ',
+      filters: [
+        { text: 'Tất cả', value: 'all' },
+        { text: 'Dịch vụ', value: 'services' },
+        { text: 'Sản phẩm', value: 'products' },
+      ],
+      onFilter: (value, record) => record.applicableTo === value,
+      render: (v) =>
+        v === 'all' ? 'Tất cả' : v === 'products' ? 'Sản phẩm' : 'Dịch vụ',
     },
     {
       title: 'Hành động',
@@ -170,19 +257,26 @@ const VoucherManagement = () => {
       ),
     },
   ];
-
+  
   return (
     <div className="pt-5 p-4">
       <h2>Quản Lý Voucher</h2>
+
       <div className="flex gap-4 mt-4 mb-6">
-        <Button className='bg-blue-500' onClick={() => openEditDrawer()}>Thêm Voucher</Button>
-        <Input
-          placeholder="Tìm theo mã voucher"
-          value={voucherCodeFilter}
-          onChange={(e) => setVoucherCodeFilter(e.target.value)}
-          style={{ width: 300 }}
-        />
+        <Button className="bg-blue-500" onClick={() => openEditDrawer()}>Thêm Voucher</Button>
+        <Button onClick={() => setStatusFilter('active')}>Còn sử dụng</Button>
+        <Button onClick={() => setStatusFilter('expired')}>Đã hết hạn</Button>
+        <Button icon={<ReloadOutlined />} onClick={() => setStatusFilter('all')}>Tải lại</Button>
       </div>
+
+      <Spin tip="Đang tải dữ liệu..." spinning={isTableLoading}>
+        <Table
+          style={{ marginTop: 20 }}
+          dataSource={vouchers}
+          columns={columns}
+          pagination={{ pageSize: 5 }}
+        />
+      </Spin>
 
       <Drawer
         title={selectVoucher ? 'Chỉnh sửa voucher' : 'Thêm voucher'}
@@ -196,13 +290,13 @@ const VoucherManagement = () => {
             <Input />
           </Form.Item>
           <Form.Item name="discount" label="Giảm giá (%)" rules={[{ required: true }]}>
-            <InputNumber min={1} max={99} style={{ width: '100%' }} />
+            <Input type="number" min={1} max={99} />
           </Form.Item>
           <Form.Item name="maximumDiscount" label="Giảm tối đa" rules={[{ required: true }]}>
-            <InputNumber min={1} style={{ width: '100%' }} />
+            <Input type="number" min={1} />
           </Form.Item>
           <Form.Item name="minimumAmount" label="Đơn tối thiểu" rules={[{ required: true }]}>
-            <InputNumber min={0} style={{ width: '100%' }} />
+            <Input type="number" min={0} />
           </Form.Item>
           <Form.Item name="startDate" label="Ngày bắt đầu" rules={[{ required: true }]}>
             <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
@@ -211,7 +305,7 @@ const VoucherManagement = () => {
             <DatePicker format="YYYY-MM-DD" style={{ width: '100%' }} />
           </Form.Item>
           <Form.Item name="usageLimit" label="Giới hạn sử dụng" rules={[{ required: true }]}>
-            <InputNumber min={1} style={{ width: '100%' }} />
+            <Input type="number" min={1} />
           </Form.Item>
           <Form.Item name="applicableTo" label="Áp dụng cho" rules={[{ required: true }]}>
             <Select>
@@ -221,7 +315,7 @@ const VoucherManagement = () => {
             </Select>
           </Form.Item>
           <Button
-            className='bg-blue-500'
+            className="bg-blue-500"
             block
             onClick={handleSubmit}
             loading={loading}
@@ -230,15 +324,6 @@ const VoucherManagement = () => {
           </Button>
         </Form>
       </Drawer>
-
-      <Spin tip="Đang tải dữ liệu..." spinning={isTableLoading}>
-        <Table
-          style={{ marginTop: 20 }}
-          dataSource={vouchers}
-          columns={columns}
-          pagination={{ pageSize: 5 }}
-        />
-      </Spin>
     </div>
   );
 };

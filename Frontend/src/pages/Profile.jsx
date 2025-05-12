@@ -56,7 +56,7 @@ function Profile() {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-6xl w-full">
                     <div className="bg-white rounded-3xl shadow-xl p-6 border border-gray-100">
                         <div className="mb-2 text-center">
-                            <p className="text-2xl font-semibold text-pink-600">Quản lý thông tin</p>
+                            <p className="text-2xl font-semibold text-footcolor">Quản lý thông tin</p>
                         </div>
                         <Menu
                             mode="inline"
@@ -73,37 +73,38 @@ function Profile() {
             </div>
 
             <style>
-                {`
-                    .custom-menu .ant-menu-item {
-                        border-radius: 0.75rem;
-                        margin-bottom: 0.5rem;
-                        padding: 14px 16px;
-                        display: flex;
-                        align-items: center;
-                        transition: all 0.3s ease;
-                        font-size: 16px;
-                        font-weight: 500;
-                    }
+            {`
+  .custom-menu .ant-menu-item {
+      border-radius: 0.75rem;
+      margin-bottom: 0.5rem;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      transition: all 0.3s ease;
+      font-size: 16px;
+      font-weight: 500;
+  }
 
-                    .custom-menu .ant-menu-item:hover {
-                        background: linear-gradient(135deg, #f9a8d4, #f3e8ff) !important;
-                        color: #ec4899 !important;
-                        transform: scale(1.02);
-                        box-shadow: 0 4px 10px rgba(236, 72, 153, 0.2);
-                    }
+  .custom-menu .ant-menu-item:hover {
+      background: linear-gradient(135deg, #93c5fd, #e0f2fe) !important;
+      color: #3b82f6 !important;
+      transform: scale(1.02);
+      box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
+  }
 
-                    .custom-menu .ant-menu-item-selected {
-                        background: linear-gradient(135deg, #f9a8d4, #f3e8ff) !important;
-                        color: #ec4899 !important;
-                        font-weight: 600;
-                        box-shadow: 0 2px 8px rgba(236, 72, 153, 0.15);
-                    }
+  .custom-menu .ant-menu-item-selected {
+      background: linear-gradient(135deg, #93c5fd, #e0f2fe) !important;
+      color: #3b82f6 !important;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+  }
 
-                    .custom-menu .ant-menu-item .anticon {
-                        font-size: 18px;
-                        margin-right: 12px;
-                    }
-                `}
+  .custom-menu .ant-menu-item .anticon {
+      font-size: 18px;
+      margin-right: 12px;
+  }
+`}
+
             </style>
         </>
     );

@@ -49,7 +49,9 @@ const ServiceDetailPage = () => {
         const token = localStorage.getItem('token');
         if (!token) {
             errorToast('Vui lòng đăng nhập để đặt lịch!');
-            navigate('/sign-in');
+            setTimeout(() => {
+                navigate('/sign-in');
+            }, 2000);
         } else {
             navigate(`/book-service/${id}`, { state: { service } });
         }

@@ -8,6 +8,7 @@ import {
     Form,
     Popconfirm,
     Spin,
+    Select,
 } from 'antd';
 import {
     DeleteOutlined,
@@ -16,11 +17,13 @@ import {
     PlusOutlined, // Thêm icon cho nút Thêm mới
 } from '@ant-design/icons';
 import {
-    createCategory,     // Nên là createCategory nếu theo API service mẫu
-    getAllCategories,  // Nên là getAllCategories nếu theo API service mẫu
+    createCategory,   
+    getAllCategories,  
     updateCategory,
-    deleteCategory,  // Nên là deleteCategory nếu theo API service mẫu
-} from '../../APIs/categoryApis'; // Đảm bảo các hàm này khớp với backend
+    deleteCategory, 
+} from '../../APIs/categoryApis';
+import { Option } from 'lucide-react';
+import { filterProps } from 'framer-motion';
 
 const CategoryManagement = () => {
     const [categories, setCategories] = useState([]);
@@ -37,36 +40,40 @@ const CategoryManagement = () => {
         fetchCategories();
     }, []);
 
-    const fetchCategories = async () => {
-        setIsTableLoading(true);
-        try {
-            const res = await getAllCategories(token); // Gọi API lấy danh sách
-            if (res && (res.success || res.sucsess) && Array.isArray(res.data)) {
-                setCategories(res.data.map(cat => ({ ...cat, key: cat._id }))); // Thêm key cho Table
-            } else if (res && res.data && Array.isArray(res.data.categories)) { // Xử lý trường hợp data nằm trong data.categories
-                setCategories(res.data.categories.map(cat => ({ ...cat, key: cat._id })));
-            }
-            else {
-                // Nếu cấu trúc response không như mong đợi hoặc data không phải là mảng
-                console.error('Fetched data is not in expected format:', res);
-                setCategories([]); // Đặt thành mảng rỗng để tránh lỗi Table
-                message.error(res?.message || 'Không thể tải danh sách danh mục hoặc định dạng dữ liệu không đúng.');
-            }
-        } catch (error) {
-            console.error('Error fetching categories:', error);
-            message.error(`Không thể tải danh sách danh mục: ${error.response?.data?.message || error.message || 'Lỗi không xác định'}`);
-            setCategories([]); // Đảm bảo categories là mảng khi có lỗi
-        } finally {
-            setIsTableLoading(false);
+ const fetchCategories = async () => {
+    setIsTableLoading(true);
+    try {
+        const res = await getAllCategories(token);
+        const data = Array.isArray(res?.data)
+            ? res.data
+            : Array.isArray(res?.data?.categories)
+                ? res.data.categories
+                : [];
+
+        if (data.length > 0) {
+            setCategories(data.map(cat => ({ ...cat, key: cat._id })));
+        } else {
+            setCategories([]);
+            message.warning('Không có danh mục nào hoặc định dạng dữ liệu không đúng.');
         }
-    };
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+        message.error(`Không thể tải danh sách danh mục: ${error?.response?.data?.message || error.message}`);
+        setCategories([]);
+    } finally {
+        setIsTableLoading(false);
+    }
+};
+
 
     const openDrawer = (category = null) => {
         setSelectedCategory(category);
         if (category) {
             form.setFieldsValue({
                 name: category.name,
-                description: category.description, // Thêm description
+                description: category.description, 
+                style: category.style,
+                applicableFor: category.applicableFor,
             });
         } else {
             form.resetFields();
@@ -80,36 +87,28 @@ const CategoryManagement = () => {
         form.resetFields();
     };
 
-    const handleSubmit = async (values) => {
-        setFormLoading(true);
-        try {
-            let response;
-            if (selectedCategory) {
-                // Cập nhật danh mục: API của bạn nhận id và data (name, description)
-                response = await updateCategory(selectedCategory._id, values, token);
-                if (response && (response.sucsess || response.success)) {
-                    message.success('Cập nhật danh mục thành công!');
-                } else {
-                    throw new Error(response?.message || 'Cập nhật danh mục thất bại');
-                }
-            } else {
-                // Thêm danh mục mới: API của bạn nhận data (name, description)
-                response = await createCategory(values, token);
-                if (response && (response.sucsess || response.success)) {
-                    message.success('Thêm danh mục thành công!');
-                } else {
-                    throw new Error(response?.message || 'Thêm danh mục thất bại');
-                }
-            }
-            fetchCategories(); // Tải lại danh sách
-            closeDrawer();     // Đóng drawer và reset form
-        } catch (error) {
-            console.error('Error submitting category:', error);
-            message.error(`Có lỗi xảy ra: ${error.message || error.response?.data?.message || 'Lỗi không xác định'}`);
-        } finally {
-            setFormLoading(false);
+ const handleSubmit = async (values) => {
+    setFormLoading(true);
+    try {
+        if (selectedCategory) {
+            await updateCategory(selectedCategory._id, values);
+            message.success('Cập nhật danh mục thành công!');
+           
+        } else {
+          await createCategory(values);
+                message.success('Thêm danh mục thành công!');
         }
-    };
+
+        fetchCategories();
+        closeDrawer();
+    } catch (error) {
+        console.error('Error submitting category:', error);
+        message.error(`Có lỗi xảy ra: ${error?.response?.data?.message || error.message || 'Lỗi không xác định'}`);
+    } finally {
+        setFormLoading(false);
+    }
+};
+
 
     const handleDelete = async (id) => {
         try {
@@ -138,6 +137,17 @@ const CategoryManagement = () => {
             dataIndex: 'name',
             key: 'name',
             ellipsis: true,
+        },
+        {
+            title: 'Áp dụng cho',
+            dataIndex: 'applicableFor', 
+            key: 'applicableFor',
+            ellipsis: true,
+            filters: [
+                { text: 'Sản phẩm', value: 'Sản phẩm' },
+                { text: 'Dịch vụ', value: 'Dịch vụ' },
+            ],
+            onFilter: (value, record) => record.applicableFor.includes(value),
         },
         {
             title: 'Mô tả',
@@ -215,8 +225,8 @@ const CategoryManagement = () => {
                 closable
                 onClose={closeDrawer}
                 open={isDrawerOpen}
-                width={450} // Tăng chiều rộng một chút
-                destroyOnClose // Hủy form khi đóng để reset validation
+                width={450} 
+                destroyOnClose
             >
                 <Spin spinning={formLoading}>
                     <Form form={form} onFinish={handleSubmit} layout="vertical">
@@ -226,6 +236,18 @@ const CategoryManagement = () => {
                             rules={[{ required: true, message: 'Vui lòng nhập tên danh mục!' }]}
                         >
                             <Input placeholder="Nhập tên danh mục" />
+                        </Form.Item>
+                       
+                        <Form.Item
+                            name="applicableFor"
+                            label="Áp dụng cho"
+                            rules={[{ required: true, message: 'Vui lòng nhập đối tượng áp dụng!' }]}
+                        >
+                        <Select>
+                            <Option value="Sản phẩm">Sản phẩm</Option>
+                            <Option value="Dịch vụ">Dịch vụ</Option>
+
+                        </Select>
                         </Form.Item>
 
                         <Form.Item

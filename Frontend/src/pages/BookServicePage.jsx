@@ -25,8 +25,8 @@ import { redeemVoucher } from "../APIs/VoucherAPI";
 import Header from "../components/Header";
 const { Option } = Select;
 const { Text } = Typography;
-const API_BASE_URL = "https://backend-fu3h.onrender.com/api/";
-// const API_BASE_URL = "http://localhost:4000/api/";
+// const API_BASE_URL = "https://backend-fu3h.onrender.com/api/";
+const API_BASE_URL = "http://localhost:4000/api/";
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -51,13 +51,6 @@ const BookServicePage = () => {
   const [isVoucherModalVisible, setIsVoucherModalVisible] = useState(false);
   const now = new Date();
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      errorToast("Vui lòng đăng nhập để đặt lịch");
-      navigate("/sign-in", { state: { from: location } });
-      return;
-    }
-
     if (location.state?.service) {
       const parsedService = {
         ...location.state.service,

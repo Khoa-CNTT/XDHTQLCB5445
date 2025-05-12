@@ -4,7 +4,7 @@ import {
   Badge, message, Space, Empty
 } from "antd";
 import { EditOutlined, ReloadOutlined } from "@ant-design/icons";
-import { listAllOrders, updateOrderStatus } from "../../APIs/orderApi";
+import {listOrder, updateOrderStatus } from "../../APIs/orderApi";
 import { getUser } from "../../APIs/userApi";
 
 const OrderManagement = () => {
@@ -27,29 +27,29 @@ const OrderManagement = () => {
     { value: "Đang xử lý", label: "Đang xử lý" },
     { value: "Đã xác nhận", label: "Đã xác nhận" },
     { value: "Đã giao", label: "Đã giao" },
+    { value: "Đang giao", label: "Đang giao" },
     { value: "Đã hủy", label: "Đã hủy" },
   ];
 
-  // ===== Helper: render tag trạng thái thanh toán =====
   const paymentStatusTag = (status) => {
     const colorMap = {
       "Đang xử lý": "orange",
       "Đã xác nhận": "green",
       "Đã giao": "blue",
+      "Đang giao": "blue",
       "Đã hủy": "red",
-      "Hoàn tiền": "red",
     };
     const labelMap = {
       "Đang xử lý": "Chờ thanh toán",
       "Đã xác nhận": "Đã thanh toán",
       "Đã giao": "Đã giao",
+      "Đang giao": "Đang giao",
       "Đã hủy": "Đã hủy",
       "Hoàn tiền": "Đã hoàn tiền",
     };
     return <Tag color={colorMap[status] || "default"}>{labelMap[status] || status}</Tag>;
   };
 
-  // ===== Fetch Orders =====
   const fetchOrders = useCallback(async () => {
     setState(prev => ({
       ...prev,
@@ -58,7 +58,7 @@ const OrderManagement = () => {
     }));
 
     try {
-      const response = await listAllOrders();
+      const response = await listOrder();
       if (response.success && Array.isArray(response.data)) {
         const processedOrders = response.data.map(item => ({
           ...item,

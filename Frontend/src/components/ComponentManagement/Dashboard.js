@@ -7,7 +7,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import { listAllOrders } from "../../APIs/orderApi";
+import {  listOrder } from "../../APIs/orderApi";
 import { listUser } from "../../APIs/userApi";
 import { getAllBookings } from "../../APIs/booking";
 import anhSpa from "../../img/anhspa.png";
@@ -121,7 +121,7 @@ const Dashboard = () => {
     setStats((prev) => ({ ...prev, loading: true, error: null }));
     try {
       const [orderRes, userRes, bookingRes] = await Promise.all([
-        listAllOrders(),
+        listOrder(),
         listUser(),
         getAllBookings(),
       ]);

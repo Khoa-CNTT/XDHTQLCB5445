@@ -192,11 +192,11 @@ const ScheduleTab = () => {
     <div className="space-y-2">
       {toastContainer()}
       <div className="flex justify-between items-center mb-6">
-         <h2 className="text-2xl font-semibold text-pink-800">Lịch Hẹn Của Tôi</h2>
+         <h2 className="text-2xl font-semibold text-black-800">Lịch Hẹn Của Tôi</h2>
          <Button
             type="primary"
             onClick={() => navigate('/servicepage')} 
-            className="bg-pink-600 hover:bg-pink-700 border-pink-600 hover:border-pink-700 focus:ring-pink-500 text-white font-semibold rounded-md shadow-sm transition duration-150"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md shadow-sm transition duration-150"
          >
             Đặt lịch hẹn mới
           </Button>

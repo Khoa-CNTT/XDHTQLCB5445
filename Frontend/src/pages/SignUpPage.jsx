@@ -31,7 +31,9 @@ const SignUpPage = () => {
       const res =await registerUser({ email, password });
       if(res.success === true){
         successToast("Đăng ký thành công! Chúng tôi đã gửi xác nhận vào Email.");
-        navigate("/sign-in");
+        setTimeout(() => {
+          navigate("/sign-in");
+        }, 2000);
       }
       else if(res.success === false){
         errorToast("Email đã tồn tại!");

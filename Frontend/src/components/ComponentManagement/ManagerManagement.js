@@ -162,7 +162,6 @@ export const ManagerManagement = () => {
       ),
     },
   ];
-
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-4">
@@ -171,7 +170,6 @@ export const ManagerManagement = () => {
           Thêm quản lý
         </Button>
       </div>
-
       <Table
         columns={columns}
         dataSource={dataManager}
@@ -214,7 +212,6 @@ export const ManagerManagement = () => {
               ))}
             </Select>
           </Form.Item>
-
           <Form.Item
             name="Position"
             label="Vị trí"

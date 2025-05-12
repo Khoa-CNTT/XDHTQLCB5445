@@ -36,7 +36,7 @@ const Service = () => {
 
   useEffect(() => {
     setCurrentPage(1);
-    setFilter(t("scheduleTab.filters.allServices")); // Reset filter khi ngôn ngữ thay đổi
+    setFilter(t("scheduleTab.filters.allServices"));
   }, [t]);
 
   const filteredProducts =
@@ -137,7 +137,7 @@ const Service = () => {
                       : "bg-gray-200 text-gray-700"
                   }`}
                 >
-                  {t(`scheduleTab.filters.${item.name.toLowerCase()}`, item.name)} {/* Dịch danh mục */}
+                  {t(`scheduleTab.filters.${item.name.toLowerCase()}`, item.name)}
                 </motion.div>
               ))}
           </motion.div>
@@ -153,7 +153,7 @@ const Service = () => {
           )}
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 mt-8 ml-[48px] gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-4 mt-8 ml-[40px] gap-5">
           {paginatedProducts.length > 0 ? (
             paginatedProducts.map((db, index) => (
               <motion.div
@@ -177,7 +177,7 @@ const Service = () => {
             ))
           ) : (
             <p className="text-center text-gray-600 col-span-3">
-              {t("services.noServices")} {/* Không có dịch vụ */}
+              {t("services.noServices")}
             </p>
           )}
         </div>

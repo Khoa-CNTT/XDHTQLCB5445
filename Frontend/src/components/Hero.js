@@ -10,7 +10,7 @@ const Hero = () => {
       try {
         const res = await getAllSlides();
         if (res.success && res.data.length > 0) {
-          const activeSlides = res.data.filter(slide => slide.isActive);
+          const activeSlides = res.data.filter(slide => slide.isActive === true);
           setSlides(activeSlides.length > 0 ? activeSlides : res.data);
         }
       } catch (error) {

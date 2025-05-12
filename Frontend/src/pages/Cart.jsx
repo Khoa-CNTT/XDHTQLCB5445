@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   Card,
   Button,
@@ -24,9 +24,10 @@ import { getProducts } from "../APIs/ProductsApi";
 import { errorToast, successToast, toastContainer } from "../utils/toast";
 import axios from "axios";
 import Header from "../components/Header";
+import { CartContext } from "../context/CartContext";
 
-const API_BASE_URL = "https://backend-fu3h.onrender.com/api/";
-// const API_BASE_URL = "http://localhost:4000/api"; // Replace with your local URL
+// const API_BASE_URL = "https://backend-fu3h.onrender.com/api/";
+const API_BASE_URL = "http://localhost:4000/api";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -38,6 +39,7 @@ const api = axios.create({
 const { Text } = Typography;
 
 const Cart = () => {
+  const { fetchCartCount } = useContext(CartContext); // Lấy hàm fetchCartCount từ Context
   const [cartItems, setCartItems] = useState({});
   const [products, setProducts] = useState([]);
   const [quantity, setQuantity] = useState(1);
@@ -60,11 +62,13 @@ const Cart = () => {
       const res = await getCart();
       setCartItems(res?.data || {});
       setLoading(false);
+      fetchCartCount(); // Cập nhật cartCount sau khi tải giỏ hàng
     } catch (err) {
       setError("Lỗi khi tải giỏ hàng");
       setLoading(false);
     }
   };
+
   const fetchProducts = async () => {
     try {
       const res = await getProducts();
@@ -141,7 +145,8 @@ const Cart = () => {
       errorToast("Không thể giảm số lượng xuống dưới 1!");
     }
   };
-  //  checkbox
+
+  // Checkbox
   const handleSelectItem = (productId) => {
     setSelectedItems((prevSelected) =>
       prevSelected.includes(productId)
@@ -149,6 +154,7 @@ const Cart = () => {
         : [...prevSelected, productId]
     );
   };
+
   const handleSelectAll = () => {
     const allProductIds = products
       .filter((product) => cartItems[product._id])
@@ -240,6 +246,7 @@ const Cart = () => {
 
     return discountAmount.toLocaleString("vi-VN");
   };
+
   const discount = calculateDiscount() * 1000;
   const shippingFee = 30000;
   const totalPayment = subtotal + shippingFee - discount;
@@ -260,6 +267,7 @@ const Cart = () => {
 
   if (loading) return <div>Đang tải...</div>;
   if (error) return <div>{error}</div>;
+
   return (
     <>
       <Header className="!bg-white !text-black !shadow-md" />
@@ -333,24 +341,29 @@ const Cart = () => {
                           </button>
                         </div>
                         <Popconfirm
-                          title="Bạn có chắc muốn xóa?"
+                          title="Xóa sản phẩm"
+                          description="Bạn có chắc chắn muốn xóa sản phẩm này?"
                           onConfirm={() => handleRemoveFromCart(product._id)}
-                          okText="Xoá"
-                          cancelText="Huỷ"
+                          okText="Xóa"
+                          cancelText="Hủy"
+                          okButtonProps={{
+                            style: {
+                              backgroundColor: "blue",
+                              color: "white",
+                              borderRadius: "5px",
+                            },
+                          }}
                         >
-                          <button className="px-2 py-1 text-black rounded">
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                          <Trash2 className="w-4 h-4" />
                         </Popconfirm>
                       </div>
                     </Card>
                   )
               )}
               <div className="flex items-center p-3 bg-slate-300">
-                <p className=" flex bg-slate-300">
+                <p className="flex bg-slate-300">
                   Tổng sản phẩm: {totalQuantity}
                 </p>
-
                 <Button
                   type="link"
                   className="text-blue-500 hover:text-blue-700"

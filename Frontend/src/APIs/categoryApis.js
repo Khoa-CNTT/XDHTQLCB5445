@@ -35,15 +35,17 @@ export const createCategory = async (categoryData) => {
 };
 
 
-export const updateCategory = async (categoryDataWithId) => {
+export const updateCategory = async (id, data, token) => {
     try {
-        const response = await axios.put(`${API_URL}/update`, categoryDataWithId);
+        const response = await axios.put(`${API_URL}/update`, { id, ...data }
+        );
         return response.data;
     } catch (error) {
-        console.error(`Error updating category ${categoryDataWithId.id}:`, error.response ? error.response.data : error.message);
+        console.error(`Error updating category ${id}:`, error.response?.data || error.message);
         return { success: false, data: null, message: error.response?.data?.message || "Lỗi khi cập nhật danh mục." };
     }
 };
+
 
 
 export const deleteCategory = async (id) => {
@@ -66,4 +68,3 @@ export const searchCategories = async (searchParams) => {
         return { success: false, data: [], total: 0, page: 1, pages: 0, message: error.response?.data?.message || "Lỗi khi tìm kiếm danh mục." };
     }
 };
-

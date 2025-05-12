@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import user from "../img/user.png";
 import vi from "../img/vi.png";
@@ -11,20 +11,24 @@ import { jwtDecode } from "jwt-decode";
 import { useTranslation } from "react-i18next";
 import Mess from "./Mess";
 import BackToTop from "./BackToTop";
+import { CartContext } from "../context/CartContext";
 
 const DEFAULT_AVATAR = user;
 
-const Header = ({className=''}) => {
+const Header = ({ className = '' }) => {
   const { t, i18n } = useTranslation();
   const [isMenu, setIsMenu] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [userAvatar, setUserAvatar] = useState("");
   const [userRole, setUserRole] = useState("");
+  const { cartCount } = useContext(CartContext); // Lấy cartCount từ Context
   const navigate = useNavigate();
+
   const handleLanguageChange = () => {
     const newLang = i18n.language === "vi" ? "en" : "vi";
     i18n.changeLanguage(newLang);
   };
+
   const fetchUserData = async () => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -38,11 +42,11 @@ const Header = ({className=''}) => {
           localStorage.setItem("userAvatar", userData.data.image);
         }
       } catch (error) {
-        
+        console.error("Error fetching user data:", error);
       }
     }
   };
-  
+
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
@@ -71,7 +75,6 @@ const Header = ({className=''}) => {
     navigate("/sign-in");
   };
 
-
   const handleAvatar = () => {
     navigate("/sign-in");
     setIsMenu(false);
@@ -93,12 +96,12 @@ const Header = ({className=''}) => {
 
   return (
     <header
-    className={`fixed z-30 top-0 left-0 h-[65px] w-full shadow-sm transition-all 
-      ${isScrolled ? "bg-white text-black shadow-lg p-3" : "bg-transparent text-white p-3"}
-      ${className}`}
+      className={`fixed z-30 top-0 left-0 h-[65px] w-full shadow-sm transition-all 
+        ${isScrolled ? "bg-white text-black shadow-lg p-3" : "bg-transparent text-white p-3"}
+        ${className}`}
     > 
-    <Mess />
-    <BackToTop/>
+      <Mess />
+      <BackToTop/>
 
       <div className="container relative mx-auto flex justify-between items-center px-6">
         <div className="text-2xl font-bold text-maincolor">
@@ -158,7 +161,14 @@ const Header = ({className=''}) => {
           </div>
           <div className="relative cursor-pointer hover:text-maincolor transition">
             <Link to="/cart">
-              <IoBagHandleOutline size={24} />
+              <div className="relative">
+                <IoBagHandleOutline size={24} />
+                {cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {cartCount} {/* Hiển thị số sản phẩm duy nhất */}
+                  </span>
+                )}
+              </div>
             </Link>
           </div>
           <div className="cursor-pointer hover:text-maincolor transition" onClick={handleLanguageChange}>

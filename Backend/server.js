@@ -19,6 +19,7 @@ import serviceRouter from "./routes/serviceRoutes.js";
 import slideBannerRouter from "./routes/bannerRoutes.js";
 import vnpayRouter from './routes/vnpayRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
+import managerRouter from "./routes/managerRoutes.js";
 
 
 const app = express();
@@ -47,6 +48,7 @@ app.use('/api/booking', bookingRouter);
 app.use('/api/service', serviceRouter);
 app.use('/api/slide', slideBannerRouter);
 app.use('/api/vnpay', vnpayRouter);
+app.use('/api/manager', managerRouter);
 app.use('/api/categories', categoryRoutes);
 
 
@@ -66,4 +68,3 @@ app.use('/uploads', express.static('uploads'));
 app.listen(port, () => {
   console.log(`server started on http://localhost:${port}`);
 });
-

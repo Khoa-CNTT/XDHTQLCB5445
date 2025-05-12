@@ -1,8 +1,7 @@
 import axios from "axios";
 
 const manager = axios.create({
-  //baseURL: "https://backend-fu3h.onrender.com/api/",
-   baseURL: "http://localhost:4000/api/",
+  baseURL: "http://localhost:4000/api/",
   headers: { "Content-Type": "application/json" }
 });
 

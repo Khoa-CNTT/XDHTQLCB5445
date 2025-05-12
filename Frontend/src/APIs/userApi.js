@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-//const API_BASE_URL ='https://backend-fu3h.onrender.com/api';
- const API_BASE_URL = 'http://localhost:4000/api'; // Replace with your local URL
+// const API_BASE_URL ='https://backend-fu3h.onrender.com/api';
+const API_BASE_URL = 'http://localhost:4000/api'; 
 
 const userApi = axios.create({
   baseURL: API_BASE_URL,
@@ -14,10 +14,16 @@ export const registerUser = async (data) => {
   const response = await userApi.post('/user/register', data);
   return response.data;
 };
-
 export const loginUser = async (data) => {
-  const response = await userApi.post('/user/login', data);
-  return response.data;
+  try {
+    const response = await userApi.post('/user/login', data);
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      return error.response.data;
+    }
+    return { success: false, message: "Network error" };
+  }
 };
 
 export const getUser = async (id) => {

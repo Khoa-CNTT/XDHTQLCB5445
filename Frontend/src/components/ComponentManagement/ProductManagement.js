@@ -18,6 +18,7 @@ import {
   UploadOutlined,
 } from '@ant-design/icons';
 import { getProducts, addProduct, updateProduct } from '../../APIs/ProductsApi';
+import { getAllCategories } from '../../APIs/categoryApis';
 import axios from 'axios';
 import TextArea from 'antd/es/input/TextArea';
 import { getBase64 } from '../../utils/ultils';
@@ -37,6 +38,7 @@ const ProductManagement = () => {
 
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
 
   const fetchProducts = async () => {
@@ -45,18 +47,31 @@ const ProductManagement = () => {
       const response = await getProducts();
       if (response.success) {
         setProducts(response.data);
-        const uniqueCategories = [...new Set(response.data.map(product => product.Category))];
-        setCategories(uniqueCategories.map((name, index) => ({ _id: index, name })));
       } else {
         setProducts([]);
       }
     } catch (error) {
-  
       setProducts([]);
     } finally {
       setIsTableLoading(false);
     }
   };
+
+const fetchCategories = async () => {
+  try {
+    const response = await getAllCategories();
+    if (response.success && Array.isArray(response.data)) {
+      const productCategories = response.data
+        .filter(cat => cat.applicableFor === 'Sản phẩm')
+        .map(cat => ({ _id: cat._id, name: cat.name }));
+      setCategories(productCategories);
+    } else {
+      setCategories([]);
+    }
+  } catch (error) {
+    setCategories([]);
+  }
+};
   const openEditDrawer = (product = null) => {
     if (product) {
       setSelectProduct({ ...product });
@@ -84,9 +99,14 @@ const ProductManagement = () => {
     }
     setIsDrawerOpen(true);
   };
+
   const handleUpdateProduct = async (values) => {
     setLoading(true);
     try {
+      if (values.PricePD < 0 || values.StockQuantity < 0) {
+        message.error('Giá và số lượng phải lớn hơn 0!');
+        return;
+      }
       const updatedData = {
         ...values,
         ImagePD: image || selectProduct?.ImagePD,
@@ -104,7 +124,6 @@ const ProductManagement = () => {
       setIsDrawerOpen(false);
       form.resetFields();
     } catch (error) {
-      
       message.error('Có lỗi xảy ra, vui lòng thử lại.');
     } finally {
       setLoading(false);
@@ -119,7 +138,6 @@ const ProductManagement = () => {
         fetchProducts();
       }
     } catch (error) {
-  
       message.error('Xóa sản phẩm thất bại!');
     }
   };
@@ -162,9 +180,28 @@ const ProductManagement = () => {
       key: 'DescriptionPD',
       className: 'w-[500px]',
     },
-    { title: 'Giá', dataIndex: 'PricePD', key: 'PricePD' },
-    { title: 'Số lượng', dataIndex: 'StockQuantity', key: 'StockQuantity' },
-    { title: 'Danh mục', dataIndex: 'Category', key: 'Category' },
+    {
+      title: 'Giá',
+      dataIndex: 'PricePD',
+      key: 'PricePD',
+      sorter: (a, b) => a.PricePD - b.PricePD,
+    },
+    {
+      title: 'Số lượng',
+      dataIndex: 'StockQuantity',
+      key: 'StockQuantity',
+    },
+    {
+      title: 'Danh mục',
+      dataIndex: 'Category',
+      key: 'Category',
+      filters: Array.from(new Set(products.map(p => p.Category))).map(category => ({
+        text: category,
+        value: category,
+      })),
+      onFilter: (value, record) =>
+        record.Category?.toLowerCase().includes(value.toLowerCase()),
+    },
     {
       title: 'Hành động',
       key: 'action',
@@ -268,36 +305,16 @@ const ProductManagement = () => {
           <Form.Item
             name="Category"
             label="Danh mục"
-            rules={[{ required: true, message: 'Vui lòng nhập hoặc chọn danh mục!' }]}
+            rules={[{ required: true, message: 'Vui lòng chọn danh mục!' }]}
           >
             <Select
-              placeholder="Chọn hoặc nhập danh mục"
+              placeholder="Chọn danh mục"
               allowClear
               showSearch
-              dropdownRender={(menu) => (
-                <>
-                  {menu}
-                  <Form.Item name="customCategory" noStyle>
-                    <Input
-                      placeholder="Nhập danh mục mới"
-                      style={{ margin: 8 }}
-                      onPressEnter={(e) => {
-                        const newCategory = e.target.value.trim();
-                        if (newCategory && !categories.find(cat => cat.name === newCategory)) {
-                          setCategories([...categories, { _id: Date.now(), name: newCategory }]);
-                          form.setFieldsValue({ Category: newCategory });
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </>
-              )}
             >
               {categories.map((category) => (
                 <Option key={category._id} value={category.name}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    {category.name}
-                  </div>
+                  {category.name}
                 </Option>
               ))}
             </Select>

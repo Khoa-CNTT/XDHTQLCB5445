@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Footer from "../components/Footer";
 import OneProduct from "../components/OneProduct";
 import { getProducts } from "../APIs/ProductsApi";
@@ -9,9 +8,11 @@ import { errorToast, successToast, toastContainer } from "../utils/toast";
 import { Button, Pagination } from "antd";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
+import { CartContext } from "../context/CartContext";
 
 const Products = () => {
   const { t } = useTranslation();
+  const { fetchCartCount } = useContext(CartContext); // Lấy hàm fetchCartCount từ Context
   const [filter, setFilter] = useState(t("header.all")); // Mặc định là "Tất cả"
   const [data, setData] = useState([]);
   const [quantity, setQuantity] = useState(1);
@@ -60,6 +61,7 @@ const Products = () => {
       const res = await addToCart(productId, quantity);
       if (res?.success) {
         successToast(t("products.addToCartSuccess"));
+        fetchCartCount(); // Cập nhật cartCount sau khi thêm sản phẩm
       }
     } catch (error) {
       if (error?.response?.status === 401) {

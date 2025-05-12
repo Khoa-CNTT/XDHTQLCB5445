@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { errorToast, successToast, toastContainer } from "../utils/toast";
@@ -11,43 +11,49 @@ const SignInPage = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSignIn = async (e) => {
-    e.preventDefault();
-    const res = await login({ email, password });
+const handleSignIn = async (e) => {
+  e.preventDefault();
+  const res = await login({ email, password });
 
-    if (res.success && res.token && res.user) {
-      const { token, user } = res;
+  if (res.success && res.token && res.user) {
+    const { token, user } = res;
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("userId", user._id || user.id);
-      localStorage.setItem("role", user.role);
+    localStorage.setItem("token", token);
+    localStorage.setItem("userId", user._id || user.id);
+    localStorage.setItem("role", user.role);
 
-      if (res.user.branchId) {
-        localStorage.setItem("branchId", res.user.branchId);
-      }
-      console.log(user.branchId);
-      console.log(user.role);
-      console.log(user._id || user.id);
-
-      successToast("Đăng nhập thành công!");
-
-      switch (user.role) {
-        case "admin":
-          navigate("/admin");
-          break;
-        case "manager":
-          navigate("/manager");
-          break;
-        case "employee":
-          navigate("/schedule");
-          break;
-        default:
-          navigate("/");
-      }
-    } else {
-      errorToast("Đăng nhập thất bại!");
+    if (res.user.branchId) {
+      localStorage.setItem("branchId", res.user.branchId);
     }
-  };
+    successToast("Đăng nhập thành công!");
+setTimeout(() => {
+  switch (user.role) {
+    case "admin":
+      navigate("/admin");
+      break;
+    case "manager":
+      navigate("/manager");
+      break;
+    case "employee":
+      navigate("/schedule");
+      break;
+    default:
+      navigate("/");
+  }
+}, 1000);
+  } else {
+    if (res.message === "Email not verified") {
+      errorToast("Vui lòng xác nhận email trước khi đăng nhập.");
+    } else if (res.message === "Invalid credentials") {
+      errorToast("Vui lòi kiểm tra lại mật khẩu.");
+    } else if (res.message === "User doesn't exist") {
+      errorToast("Tài khoản không tồn tại.");
+    } else {
+      errorToast("Đã xảy ra lỗi khi đăng nhập. Vui lòng thử lại sau.");
+    }
+  }
+};
+
 
   const ForgotPassword = () => {
     navigate("/forgot-password");
@@ -57,6 +63,7 @@ const SignInPage = () => {
     <div className="flex justify-center items-center h-screen">
       {toastContainer()}
       <div className="bg-white p-8 rounded-lg shadow-lg w-96 text-center">
+      <Link className="text-blue-500 text-2xl" to={'/'} >Trở về trang chủ</Link>
         <h2 className="text-2xl font-semibold text-gray-700 mb-4">Đăng nhập</h2>
         <form onSubmit={handleSignIn}>
           <div className="mb-4">

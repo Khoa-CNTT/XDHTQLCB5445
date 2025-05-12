@@ -2,7 +2,7 @@ import { Button, Tooltip } from "antd";
 import React, { useMemo, useState } from "react";
 import { FaCartPlus } from "react-icons/fa6";
 import { IoEyeOutline } from "react-icons/io5";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const OneProduct = ({
@@ -25,11 +25,17 @@ const OneProduct = ({
       pointAtCenter: true,
     };
   }, [arrow]);
+  const navigate = useNavigate();
 
+  const handleDetailPd = () => {
+    navigate(`/product/${productId}`);
+  }
+    
   return (
-    <div className="relative h-[500px] w-[320px] group  ">
+    <div  className="relative h-[500px] w-[320px] group  ">
       <div className="bg-white h-[320px] w-[320px] p-4 border  group overflow-hidden relative transition-all duration-300 ">
         <motion.img
+        onClick={handleDetailPd}
           whileHover={{ scale: 1.2 }}
           src={image}
           alt={title}

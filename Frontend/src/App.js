@@ -5,7 +5,6 @@ import { Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import Service from './pages/Service';
 import Products from './pages/Products';
-import Booknow from './pages/Booknow';
 import Contacts from './pages/Contacts';
 import About from './pages/About';
 import Cart from './pages/Cart';
@@ -31,11 +30,12 @@ import ServicePage from './pages/ServicePage';
 import ProductsPage from './pages/ProductPage';
 import BlogPage from './pages/BlogPage';
 import Manager from './pages/Manager';
+import { CartProvider } from './context/CartContext';
 
 function App() {
   return (
     <>
-    {/* <Header /> */}
+      <CartProvider>
       <AuthProvider>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -43,7 +43,6 @@ function App() {
           <Route path="/servicepage" element={<ServicePage />} />
           <Route path="/product" element={<Products />} />
           <Route path="/productpage" element={<ProductsPage />} />
-          <Route path="/booknow" element={<Booknow />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contacts />} />
           <Route path="/sign-in" element={<SignInPage />} />
@@ -56,7 +55,6 @@ function App() {
           <Route path="/product/:id" element={<ProductDetailPage/>} />
           <Route path="/search" element={<SearchResultPage />} />
           <Route path="*" element={<Page404 />} />
-          <Route path="/search" element={<SearchPage/>}  />
           {/* Router chỉ người dùng mới sử dụng được */}
           <Route path="/order-confirmation" element={<OrderConfirmation />} />
           <Route path="/verify/success" element={ <StripeCheckout />} />   
@@ -74,6 +72,8 @@ function App() {
           {/* Router riêng dành cho employee */}
         </Routes>    
       </AuthProvider>
+     </CartProvider>
+
     </>
   );
 }

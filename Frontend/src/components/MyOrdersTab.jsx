@@ -146,6 +146,7 @@ const MyOrdersTab = () => {
         return <Tag color={color}>{text}</Tag>;
       },
     },
+    
   ];
 
   return (

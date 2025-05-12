@@ -14,7 +14,6 @@ export const createVnpayPaymentUrl = (req, orderId, amount, discountInfo = null)
         req.socket.remoteAddress ||
         (req.connection && req.connection.socket ? req.connection.socket.remoteAddress : null); 
 
-    // Handle IPv6 format (::ffff:127.0.0.1 -> 127.0.0.1)
     if (ipAddr && ipAddr.includes('::ffff:')) {
         ipAddr = ipAddr.split(':').pop();
     }
@@ -65,7 +64,7 @@ export const createVnpayPaymentUrl = (req, orderId, amount, discountInfo = null)
     vnp_Params['vnp_SecureHash'] = signed;
 
     vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
-    console.log("VNPAY URL:", vnpUrl); // Log for debugging
+    console.log("VNPAY URL:", vnpUrl); 
     return vnpUrl;
 };
 

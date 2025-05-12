@@ -30,10 +30,10 @@ const BlogViewer = () => {
         const filteredBlogs = allBlogs.filter((blog) => blog.isPublished);
         setPublishedBlogs(filteredBlogs);
       } else {
-        errorToast(t("blog.noData")); // Dịch thông báo không lấy được dữ liệu
+        errorToast(t("blog.noData")); 
       }
     } catch (error) {
-      errorToast(t("blog.fetchError")); // Dịch thông báo lỗi tải
+      errorToast(t("blog.fetchError")); 
     }
   };
 
@@ -68,13 +68,13 @@ const BlogViewer = () => {
         className="text-2xl text-[40px] font-bold mb-6 text-center"
         style={{ fontFamily: "Dancing Script, serif" }}
       >
-        {t("blog.featuredBlog")} {/* Bài viết nổi bật */}
+        {t("blog.featuredBlog")} 
       </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-center px-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-center ml-[25px] px-10">
         {paginatedBlogs.map((blog, index) => (
           <motion.div
             key={blog._id}
-            className="border border-gray-300 w-full rounded-lg bg-white p-4 shadow-md"
+            className="border border-gray-300 w-[388px] rounded-lg bg-white p-4 shadow-md"
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}

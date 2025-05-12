@@ -1,11 +1,11 @@
 import axios from "axios";
 
-//const API_BASE_URL = process.env.REACT_APP_API_KEY || "https://backend-fu3h.onrender.com/api";
-const API_BASE_URL = "http://localhost:4000/api"; // Thay thế bằng URL của bạn
+// const API_BASE_URL = process.env.REACT_APP_API_KEY || "https://backend-fu3h.onrender.com/api";
+const API_BASE_URL = "http://localhost:4000/api"; 
 
 const branch = axios.create({
-    baseURL: API_BASE_URL,
-    headers: { "Content-Type": "application/json" }
+  baseURL: API_BASE_URL,
+  headers: { "Content-Type": "application/json" }
 });
 
 
@@ -17,7 +17,7 @@ export const createBranch = async (branchData) => {
 export const updateBranch = async (id, branchData) => {
     const response = await branch.put(`branch/update/${id}`, branchData);
     return response.data;
-
+ 
 };
 
 export const removeBrand = async (id) => {
@@ -32,6 +32,6 @@ export const listBranch = async () => {
 export const getBranchById = async (id) => {
     const response = await branch.get(`branch/${id}`);
     return response.data;
-
+ 
 };
 
