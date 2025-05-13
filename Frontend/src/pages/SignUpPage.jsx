@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { registerUser } from "../APIs/userApi";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
-import { errorToast, successToast, toastContainer } from "../utils/toast";
+import { errorToast, successToast,  } from "../utils/toast";
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -46,7 +46,6 @@ const SignUpPage = () => {
   return (
     
     <div className="flex justify-center items-center h-screen bg-gradient-to-r">
-        {toastContainer()}
       <div className="bg-white p-8 rounded-lg shadow-lg w-96 text-center">
         <h2 className="text-2xl font-semibold text-gray-700 mb-4">Đăng ký</h2>
         <form onSubmit={handleSignUp}>

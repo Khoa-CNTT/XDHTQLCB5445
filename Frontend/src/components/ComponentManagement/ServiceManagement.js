@@ -118,6 +118,10 @@ const ServiceManagement = () => {
 
   const handleFormFinish = async values => {
     try {
+       if(!image) {
+              message.error('Vui lòng tải lên hình ảnh dịch vụ!');
+              return;
+            }
       if (values.price < 0 || values.duration < 0) {
         message.error("Giá và thời gian không được âm!");
         return;
@@ -158,17 +162,50 @@ const ServiceManagement = () => {
       key: "price",
       render: p =>
         p.toLocaleString("vi-VN", { style: "currency", currency: "VND" }),
-      sorter: (a, b) => a.price - b.price,
+      filters: [
+        { text: "Dưới 300.000", value: "Dưới 300.000" },
+        { text: "300.000 - 500.000", value: "300.000 - 500.000" },
+        { text: "500.000 - 1.000.000", value: "500.000 - 1.000.000" },
+        { text: "Trên 1.000.000", value: "Trên 1.000.000" },
+      ],
+      onFilter: (v, r) => {
+        const price = r.price;
+        if (v === "Dưới 300.000") {
+          return price < 300.000;
+        } else if (v === "300.000 - 500.000") {
+          return price >= 300.000 && price <= 500.000;
+        } else if (v === "500.000 - 1.000.000") {
+          return price > 500.000 && price <= 1000.000;
+        } else if (v === "Trên 1.000.000") {
+          return price > 1000.000;
+        }
+        return false;
+      },
     },
     {
       title: "Thời gian (phút)",
       dataIndex: "duration",
       key: "duration",
-      filters: [...new Set(services.map(s => s.duration))].map(d => ({
-        text: `${d} phút`,
-        value: d,
-      })),
-      onFilter: (v, r) => r.duration === v,
+      filters: [
+        { text: "0 phút - 60 phút", value: '0 phút - 60 phút' },
+        { text: "60 phút - 120 phút", value: '60 phút - 90 phút' },
+        { text: "90 phút - 120 phút", value: '90 phút - 120 phút' },
+        { text: "120 phút trở lên", value: '120 phút trở lên' },
+      ],
+      onFilter: (v, r) => {
+        const duration = r.duration;
+        if (v === '0 phút - 60 phút') {
+          return duration >= 0 && duration <= 60;
+        } else if (v === '60 phút - 90 phút') {
+          return duration > 60 && duration <= 90;
+        } else if (v === '90 phút - 120 phút') {
+          return duration > 90 && duration <= 120;
+        }
+        else if (v === '120 phút trở lên') {
+          return duration > 120;
+        }
+        return false;
+      }
     },
     {
       title: "Ảnh",

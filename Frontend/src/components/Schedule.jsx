@@ -5,8 +5,9 @@ import moment from 'moment';
 import { errorToast } from '../utils/toast';
 import { List, Tag } from 'antd';
 import { jwtDecode } from 'jwt-decode';
+import { Link } from 'react-router-dom';
 
-const hours = Array.from({ length: 10 }, (_, i) => i + 8);
+const hours = Array.from({ length: 12 }, (_, i) => i + 8);
 const daysName = ["Chủ nhật", "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"];
 
 const Schedule = ({ employeeViewId }) => {
@@ -15,7 +16,6 @@ const Schedule = ({ employeeViewId }) => {
   const [dateFilter, setDateFilter] = useState(moment().format("YYYY-MM-DD"));
   const [showSchedule, setShowSchedule] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [bookings, setBookings] = useState([]);
   const [employeeId, setEmployeeId] = useState('');
   const [data, setData] = useState([]);
   const [isEmployee, setIsEmployee] = useState(false);
@@ -138,8 +138,20 @@ const Schedule = ({ employeeViewId }) => {
   };
 
   return (
+    <>
+       <nav className="text-sm text-gray-500 mt-4">
+                 <Link to="/" className="hover:underline">
+                   Trang chủ
+                 </Link>{" "}
+                 &gt;{" "}
+                 <Link  className="hover:underline">
+                   Lịch làm việc
+                 </Link>{" "}
+                 &gt;{" "}
+               </nav>
     <div className="w-full h-full flex flex-col items-center justify-center p-6">
-      <h1 className="text-3xl font-bold mb-6">Lịch làm việc</h1>
+
+      <h1 className="mt-14 text-3xl font-bold mb-6">Lịch làm việc</h1>
 
       <div className="flex flex-col sm:flex-row gap-4 items-center justify-center mb-6 w-full max-w-5xl">
         <input
@@ -249,6 +261,7 @@ const Schedule = ({ employeeViewId }) => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

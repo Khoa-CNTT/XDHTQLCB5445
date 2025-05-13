@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getAllBlogs } from "../APIs/blogApi";
 import { Button, message, Pagination } from "antd";
 import { motion } from "framer-motion";
-import { errorToast, toastContainer } from "../utils/toast";
+import { errorToast,  } from "../utils/toast";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -63,7 +63,7 @@ const BlogViewer = () => {
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 1.2 }}
     >
-      {toastContainer()}
+      
       <h1
         className="text-2xl text-[40px] font-bold mb-6 text-center"
         style={{ fontFamily: "Dancing Script, serif" }}

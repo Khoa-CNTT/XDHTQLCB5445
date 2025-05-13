@@ -82,6 +82,10 @@ const BlogManagement = () => {
 
   const handleSubmit = async (values) => {
     const blogData = { ...values, image, userId };
+    if(!image) {
+      message.error("Vui lòng tải lên ảnh cho bài viết!");
+      return;
+    }
     try {
       if (editingBlog) {
         await updateBlog(editingBlog._id, blogData);

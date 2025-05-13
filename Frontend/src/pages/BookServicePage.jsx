@@ -18,14 +18,16 @@ import moment from "moment";
 import { listBranch } from "../APIs/brand";
 import { listEmployee, getEmployeeBookings } from "../APIs/employee";
 import { bookService } from "../APIs/booking";
-import { errorToast, successToast, toastContainer } from "../utils/toast";
+import { errorToast, successToast } from "../utils/toast";
 import axios from "axios";
 import { Tag } from "lucide-react";
 import { redeemVoucher } from "../APIs/VoucherAPI";
 import Header from "../components/Header";
+import dayjs from 'dayjs';
+
 const { Option } = Select;
 const { Text } = Typography;
-// const API_BASE_URL = "https://backend-fu3h.onrender.com/api/";
+
 const API_BASE_URL = "http://localhost:4000/api/";
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -64,12 +66,14 @@ const BookServicePage = () => {
       setService(parsedService);
     }
   }, [location, navigate]);
+
   useEffect(() => {
     if (service) {
       fetchBranches();
       fetchSavedVouchers();
     }
   }, [service]);
+
   const fetchBranches = async () => {
     try {
       setLoading(true);
@@ -86,6 +90,7 @@ const BookServicePage = () => {
       setLoading(false);
     }
   };
+
   const fetchEmployeesByBranch = async (branchId) => {
     if (!branchId) {
       setEmployees([]);
@@ -106,12 +111,14 @@ const BookServicePage = () => {
         const status = emp.Status;
         const branchInfo = emp.BranchID;
         const userInfo = emp.User;
+        const position = emp.Position;
 
         return {
           ...emp,
           branchInfo,
           userInfo,
           status,
+          position,
         };
       });
 
@@ -125,7 +132,8 @@ const BookServicePage = () => {
 
         return (
           empBranchId === branchId &&
-          emp.status?.trim().toLowerCase() !== "nghỉ việc"
+          emp.status?.trim().toLowerCase() !== "nghỉ việc" &&
+          emp.position?.trim().toLowerCase() !== "nhân viên dịch vụ"
         );
       });
 
@@ -136,6 +144,7 @@ const BookServicePage = () => {
       setEmployeeLoading(false);
     }
   };
+
   const fetchEmployeeBookings = async (employeeId, date) => {
     if (!employeeId || !date) return;
 
@@ -154,6 +163,7 @@ const BookServicePage = () => {
       setEmployeeBookings([]);
     }
   };
+
   const fetchSavedVouchers = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -189,6 +199,7 @@ const BookServicePage = () => {
       errorToast("Lỗi khi lấy danh sách voucher");
     }
   };
+
   const handleBranchChange = (branchId) => {
     form.setFieldsValue({ employee: undefined });
     if (branchId) {
@@ -197,6 +208,7 @@ const BookServicePage = () => {
       setEmployees([]);
     }
   };
+
   useEffect(() => {
     const currentBranch = form.getFieldValue("branch");
     if (currentBranch && employees.length > 0) {
@@ -205,17 +217,20 @@ const BookServicePage = () => {
       handleEmployeeChange(randomEmp._id);
     }
   }, [employees]);
+
   const handleEmployeeChange = (employeeId) => {
     const date = form.getFieldValue("date");
     if (employeeId && date) {
       fetchEmployeeBookings(employeeId, date);
     }
   };
+
   const handleWheel = (e) => {
     if (document.querySelector(".ant-picker-dropdown")) {
       e.preventDefault();
     }
   };
+
   const handleOpenChange = (open) => {
     if (open) {
       window.addEventListener("wheel", handleWheel, { passive: false });
@@ -230,8 +245,9 @@ const BookServicePage = () => {
       fetchEmployeeBookings(employeeId, date);
     }
   };
+
   const disabledTime = () => {
-    const allowedHours = Array.from({ length: 11 }, (_, i) => i + 8); 
+    const allowedHours = Array.from({ length: 11 }, (_, i) => i + 8);
     const allHours = Array.from({ length: 24 }, (_, i) => i);
     const disabledHours = allHours.filter((h) => !allowedHours.includes(h));
     return {
@@ -268,10 +284,12 @@ const BookServicePage = () => {
 
     return true;
   };
+
   const convertTimeToMinutes = (timeStr) => {
     const [hours, minutes] = timeStr.split(":").map(Number);
     return hours * 60 + minutes;
   };
+
   const showVoucherModal = () => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -280,9 +298,11 @@ const BookServicePage = () => {
     }
     setIsVoucherModalVisible(true);
   };
+
   const handleVoucherCancel = () => {
     setIsVoucherModalVisible(false);
   };
+
   const applyVoucher = (voucher) => {
     const currentDate = new Date();
     const startDate = new Date(voucher.startDate);
@@ -326,54 +346,62 @@ const BookServicePage = () => {
   const subtotal = service ? service.price : 0;
   const discount = calculateDiscount();
   const totalPayment = subtotal - discount;
-  const checkAvailabilityBeforeSubmit = async () => {
-    const values = await form.validateFields();
-    if (!service || !service._id || !service.duration) {
-      errorToast("Thiếu thông tin dịch vụ");
-      return false;
-    }
-    if (now.getHours() > values.time.hours()) {
-      errorToast("Giờ đặt lịch đã qua!");
-      return false;
-    }
-    const { branch, employee, date, time } = values;
 
-    if (!branch || !employee || !date || !time) {
-      errorToast("Vui lòng điền đầy đủ thông tin đặt lịch");
-      return false;
-    }
+ const checkAvailabilityBeforeSubmit = async () => {
+  const values = await form.validateFields();
 
-    setCheckingAvailability(true);
+  if (!service || !service._id || !service.duration) {
+    errorToast("Thiếu thông tin dịch vụ");
+    return false;
+  }
 
-    try {
-      const isAvailable = isTimeSlotAvailable(
-        employee,
-        date,
-        time,
-        service.duration
+  const timeObj = dayjs(values.time); 
+
+  const now = dayjs(); 
+
+  if (now.isAfter(dayjs(values.date).hour(timeObj.hour()).minute(timeObj.minute()))) {
+    errorToast("Giờ đặt lịch đã qua!");
+    return false;
+  }
+
+  const { branch, employee, date, time } = values;
+
+  if (!branch || !employee || !date || !time) {
+    errorToast("Vui lòng điền đầy đủ thông tin đặt lịch");
+    return false;
+  }
+
+  setCheckingAvailability(true);
+
+  try {
+    const isAvailable = isTimeSlotAvailable(
+      employee,
+      date,
+      time,
+      service.duration
+    );
+
+    if (!isAvailable) {
+      errorToast(
+        "Nhân viên đã có lịch trong khung giờ này. Vui lòng chọn thời gian khác."
       );
-
-      if (!isAvailable) {
-        errorToast(
-          "Nhân viên đã có lịch trong khung giờ này. Vui lòng chọn thời gian khác."
-        );
-        return false;
-      }
-
-      return true;
-    } catch (error) {
-      errorToast("Có lỗi khi kiểm tra khung giờ");
       return false;
-    } finally {
-      setCheckingAvailability(false);
     }
-  };
+
+    return true;
+  } catch (error) {
+    errorToast("Có lỗi khi kiểm tra khung giờ");
+    return false;
+  } finally {
+    setCheckingAvailability(false);
+  }
+};
+
   const onFinish = async (values) => {
     setServerError(null);
-
     const isAvailable = await checkAvailabilityBeforeSubmit();
     if (!isAvailable) return;
-
+    
     const token = localStorage.getItem("token");
     if (!token) {
       errorToast("Vui lòng đăng nhập để đặt lịch");
@@ -427,7 +455,6 @@ const BookServicePage = () => {
     <>
       <Header className="!bg-white !text-black !shadow-md" />
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {toastContainer()}
         <h1 className="text-2xl font-bold mb-6 text-center">
           Đặt Lịch Dịch Vụ: {service.name}
         </h1>
@@ -527,12 +554,14 @@ const BookServicePage = () => {
                     loading={loading}
                   >
                     {branches
-                    .filter((branch) => branch._id !== "680b4f376e58bda8dfa176e2")
-                    .map((branch) => (
-                      <Option key={branch._id} value={branch._id}>
-                        {branch.BranchName} - {branch.Address}
-                      </Option>
-                    ))}
+                      .filter(
+                        (branch) => branch._id !== "680b4f376e58bda8dfa176e2"
+                      )
+                      .map((branch) => (
+                        <Option key={branch._id} value={branch._id}>
+                          {branch.BranchName} - {branch.Address}
+                        </Option>
+                      ))}
                   </Select>
                 </Form.Item>
 
@@ -557,13 +586,11 @@ const BookServicePage = () => {
                   >
                     {employees.map((employee) => {
                       const employeeName =
-                        employee.userInfo?.firstName ||
-                        employee.user?.name ||
-                        employee.User?.name ||
-                        "Nhân viên";
+                        employee.userInfo?.firstName 
+                        ? `${employee.userInfo.firstName} ${employee.userInfo.lastName}`: "Nhân viên";
                       return (
                         <Option key={employee._id} value={employee._id}>
-                          {employeeName}
+                          {employeeName} 
                         </Option>
                       );
                     })}

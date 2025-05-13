@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
-import { errorToast, successToast, toastContainer } from "../utils/toast";
+import { errorToast, successToast,  } from "../utils/toast";
 
 const SignInPage = () => {
   const { login } = useContext(AuthContext);
@@ -35,7 +35,7 @@ setTimeout(() => {
       navigate("/manager");
       break;
     case "employee":
-      navigate("/schedule");
+      navigate("/");
       break;
     default:
       navigate("/");
@@ -45,7 +45,7 @@ setTimeout(() => {
     if (res.message === "Email not verified") {
       errorToast("Vui lòng xác nhận email trước khi đăng nhập.");
     } else if (res.message === "Invalid credentials") {
-      errorToast("Vui lòi kiểm tra lại mật khẩu.");
+      errorToast("Vui lòng kiểm tra lại mật khẩu.");
     } else if (res.message === "User doesn't exist") {
       errorToast("Tài khoản không tồn tại.");
     } else {
@@ -61,7 +61,7 @@ setTimeout(() => {
 
   return (
     <div className="flex justify-center items-center h-screen">
-      {toastContainer()}
+      
       <div className="bg-white p-8 rounded-lg shadow-lg w-96 text-center">
       <Link className="text-blue-500 text-2xl" to={'/'} >Trở về trang chủ</Link>
         <h2 className="text-2xl font-semibold text-gray-700 mb-4">Đăng nhập</h2>

@@ -103,6 +103,10 @@ const fetchCategories = async () => {
   const handleUpdateProduct = async (values) => {
     setLoading(true);
     try {
+      if(!image) {
+        message.error('Vui lòng tải lên hình ảnh sản phẩm!');
+        return;
+      }
       if (values.PricePD < 0 || values.StockQuantity < 0) {
         message.error('Giá và số lượng phải lớn hơn 0!');
         return;
@@ -184,12 +188,29 @@ const fetchCategories = async () => {
       title: 'Giá',
       dataIndex: 'PricePD',
       key: 'PricePD',
-      sorter: (a, b) => a.PricePD - b.PricePD,
+      filters: [
+        { text: 'Giá < 100', value: '0-100' },
+        { text: 'Giá 100 - 500', value: '100-500' },
+        { text: 'Giá > 500', value: '500-999999' },
+      ],
+      onFilter: (value, record) => {
+        const [min, max] = value.split('-').map(Number);
+        return record.PricePD >= min && (max ? record.PricePD <= max : true);
+      },
     },
     {
       title: 'Số lượng',
       dataIndex: 'StockQuantity',
       key: 'StockQuantity',
+      filters: [
+        { text: 'Số lượng < 10', value: '0-10' },
+        { text: 'Số lượng 10 - 50', value: '10-50' },
+        { text: 'Số lượng > 50', value: '50-999999' },
+      ],
+      onFilter: (value, record) => {
+        const [min, max] = value.split('-').map(Number);
+        return record.StockQuantity >= min && (max ? record.StockQuantity <= max : true);
+      },
     },
     {
       title: 'Danh mục',

@@ -5,7 +5,7 @@ import { listReviewSP, removeReviewSP } from "../APIs/ReviewSPAPI";
 import { getUser } from "../APIs/userApi";
 import { useParams } from "react-router-dom";
 import { RxDotsVertical } from "react-icons/rx";
-import { errorToast, successToast, toastContainer } from "../utils/toast";
+import { errorToast, successToast,  } from "../utils/toast";
 import { jwtDecode } from "jwt-decode";
 
 const ReviewsDetailSP = () => {
@@ -89,7 +89,7 @@ const ReviewsDetailSP = () => {
 
   return (
     <div className="mt-8 pl-5">
-      {toastContainer()}
+      
       <h2 className="text-xl font-semibold text-gray-800 mb-4">
         Đánh giá sản phẩm
       </h2>

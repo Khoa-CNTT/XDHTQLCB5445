@@ -4,8 +4,9 @@ import moment from 'moment';
 import 'moment/locale/vi'; 
 import { deleteBooking, getBookingUser } from '../APIs/booking';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { errorToast,successToast,toastContainer } from '../utils/toast';
+import { errorToast,successToast, } from '../utils/toast';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import qrcode from '../img/Dịch vụ_qrcode.png';
 
 moment.locale('vi');
 
@@ -182,6 +183,18 @@ const ScheduleTab = () => {
                 >
                     Hủy
                 </Button>
+                <Button
+                    type="link"
+                    size="small"
+                    onClick={() => {
+                      setCurrentBooking(record);
+                      setIsModalVisible(true);
+                    }}
+                    className="p-0 ml-4 h-auto font-medium text-blue-600 hover:text-blue-800"
+                    title="Xem chi tiết lịch hẹn"
+                >
+                    Chi tiết
+                </Button>
              </div>
           );
       },
@@ -190,7 +203,7 @@ const ScheduleTab = () => {
 
   return (
     <div className="space-y-2">
-      {toastContainer()}
+      
       <div className="flex justify-between items-center mb-6">
          <h2 className="text-2xl font-semibold text-black-800">Lịch Hẹn Của Tôi</h2>
          <Button
@@ -247,9 +260,8 @@ const ScheduleTab = () => {
         title={<span className="font-semibold text-lg text-pink-800">Chi tiết lịch hẹn</span>} 
         open={isModalVisible}
         onCancel={handleModalCancel} 
-        okText="Lưu thay đổi"
         cancelText="Đóng"
-        okButtonProps={{ disabled: !editStatus || !currentBooking, className:"bg-pink-600 hover:bg-pink-700 border-pink-600 hover:border-pink-700"}} // Disable OK if no status selected
+        okButtonProps={{ disabled: !editStatus || !currentBooking, className:"bg-pink-600 hover:bg-pink-700 border-pink-600 hover:border-pink-700"}} 
         cancelButtonProps={{ className:"hover:border-gray-400"}}
         destroyOnClose 
       >
@@ -283,7 +295,11 @@ const ScheduleTab = () => {
                     </div>
                  )}
             </div>
+            <div className="flex items-center justify-center mt-4">
+                 <img src={qrcode} width={300} height={300} alt="" />
+            </div>
           </div>
+          
         )}
       </Modal>
     </div>

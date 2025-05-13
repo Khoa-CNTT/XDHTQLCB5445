@@ -3,7 +3,7 @@ import { getUser, updateUser } from '../APIs/userApi';
 import { jwtDecode } from 'jwt-decode';
 import { toast } from 'react-toastify';
 import { CLOUDINARY_UPLOAD_URL, CLOUDINARY_UPLOAD_PRESET } from '../utils/cloudinaryConfig';
-import { errorToast, successToast, toastContainer } from '../utils/toast';
+import { errorToast, successToast,  } from '../utils/toast';
 
 const DEFAULT_AVATAR = 'https://placehold.co/150?text=No+Image';
 
@@ -154,7 +154,7 @@ const ProfileTab = () => {
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto px-4 py-8">
-      {toastContainer()}
+      
       <div className="text-center mb-8">
       </div>
 

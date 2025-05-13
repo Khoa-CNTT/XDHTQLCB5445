@@ -6,7 +6,7 @@
     "bookNow": "Book Now",
     "bookings": "Bookings",
     "about": "About",
-    "owner": "Owner Team",
+    "owner": "Doctor",
     "searchPlaceholder": "Search...",
     "wishlist": "Wishlist",
     "cart": "Cart",
@@ -41,7 +41,8 @@
     "addToCartSuccess": "Product added to cart successfully!",
     "pleaseLogin": "Please log in to add to cart!",
     "outOfStock": "Product is out of stock!",
-    "noProducts": "No products in this category."
+    "noProducts": "No products in this category.",
+    "onlyUsersCanOrder": "Only logged-in users can place orders."
   },
   "services": {
     "noServices": "No services in this category."

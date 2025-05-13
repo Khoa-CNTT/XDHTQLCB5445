@@ -5,7 +5,7 @@ import { getProductById } from "../APIs/ProductsApi";
 import { listReviewSP } from "../APIs/ReviewSPAPI";
 import { RightOutlined } from "@ant-design/icons";
 import { addToCart, decreaseToCart } from "../APIs/cartApi";
-import { errorToast, successToast, toastContainer } from "../utils/toast";
+import { errorToast, successToast,  } from "../utils/toast";
 
 const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
@@ -96,7 +96,7 @@ const ProductDetail = () => {
 
   return (
     <div className="mt-2">
-      {toastContainer()}
+      
       <section className="p-10">
         <div className="flex flex-col md:flex-row gap-8">
           <div className="w-full md:w-1/2">

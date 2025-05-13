@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import user from "../img/user.png";
+import user from "../img/avatar.png";
 import vi from "../img/vi.png";
 import en from "../img/en.png";
 import logo from "../img/logo.jpg";
@@ -12,22 +12,44 @@ import { useTranslation } from "react-i18next";
 import Mess from "./Mess";
 import BackToTop from "./BackToTop";
 import { CartContext } from "../context/CartContext";
+import SearchPage from "../pages/SearchResult";
+import { errorToast } from "../utils/toast";
 
 const DEFAULT_AVATAR = user;
 
-const Header = ({ className = '' }) => {
+const Header = ({ className = "" }) => {
   const { t, i18n } = useTranslation();
   const [isMenu, setIsMenu] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [userAvatar, setUserAvatar] = useState("");
   const [userRole, setUserRole] = useState("");
-  const { cartCount } = useContext(CartContext); // Lấy cartCount từ Context
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const { cartCount } = useContext(CartContext);
   const navigate = useNavigate();
 
   const handleLanguageChange = () => {
     const newLang = i18n.language === "vi" ? "en" : "vi";
     i18n.changeLanguage(newLang);
   };
+  const searchRef = useRef(null);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowSearch(false);
+      }
+    };
+
+    if (showSearch) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showSearch]);
 
   const fetchUserData = async () => {
     const token = localStorage.getItem("token");
@@ -91,17 +113,39 @@ const Header = ({ className = '' }) => {
   };
 
   const handleSearchClick = () => {
-    navigate("/search");
+    setShowSearch(!showSearch);
   };
+  const handleCartClick = () => {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    
+    if (!token) {
+      errorToast("Vui lòng đăng nhập để xem giỏ hàng!");
+      setTimeout(() => {
+        navigate("/sign-in");
+      }, 2000);
+      return;
+    }
+    if (role !== "user") {
+      errorToast("Chỉ người dùng mới có thể xem giỏ hàng!");
+      return;
+    }else {
+      navigate("/cart");
+    }
+  }
 
   return (
     <header
       className={`fixed z-30 top-0 left-0 h-[65px] w-full shadow-sm transition-all 
-        ${isScrolled ? "bg-white text-black shadow-lg p-3" : "bg-transparent text-white p-3"}
+        ${
+          isScrolled
+            ? "bg-white text-black shadow-lg p-3"
+            : "bg-transparent text-white p-3"
+        }
         ${className}`}
-    > 
+    >
       <Mess />
-      <BackToTop/>
+      <BackToTop />
 
       <div className="container relative mx-auto flex justify-between items-center px-6">
         <div className="text-2xl font-bold text-maincolor">
@@ -109,70 +153,105 @@ const Header = ({ className = '' }) => {
             <img
               src={logo}
               width={60}
-              className=" mt-[-10px] rounded-full"
-              alt="Đây là logo"
-            />{" "}
+              className="mt-[-10px] rounded-full"
+              alt="Logo"
+            />
             <div
-              className={`ml-2 text-[26]
-              ${isScrolled ? "text-black" : "text-blue"}`}
+              className={`ml-2 text-[26] ${
+                isScrolled ? "text-black" : "text-blue"
+              }`}
               style={{ fontFamily: "Dancing Script, serif" }}
             >
-              {" "}
               Spa Beauty
             </div>
           </Link>
         </div>
         <nav className="space-x-6 hidden md:flex">
-            <Link to="/" className="mt-[-7px] text-[20px] hover:text-maincolor">
-              {t("header.home")}
-            </Link>
-            <Link to="/servicepage" className="text-[20px] mt-[-7px] hover:text-maincolor">
-              {t("header.services")}
-            </Link>
-            <Link to="/productpage" className="text-[20px] mt-[-7px] hover:text-maincolor">
-              {t("header.products")}
-            </Link>
-            <Link to="/blogpage" className="mt-[-7px] text-[20px] hover:text-maincolor">
-              {t("header.blogger")}
-            </Link>
-            <Link to="/spvc" className="mt-[-7px]  text-[20px] hover:text-maincolor">
-              {t("header.voucher")}
-            </Link>
-            <Link to="/about" className="mt-[-7px] text-[20px] hover:text-maincolor">
-              {t("header.about")}
-            </Link>
-            <Link to="/contact" className=" mt-[-7px] text-[20px] hover:text-maincolor">
-              {t("header.owner")}
-            </Link>
+          <Link to="/" className="mt-[-7px] text-[20px] hover:text-maincolor">
+            {t("header.home")}
+          </Link>
+          <Link
+            to="/servicepage"
+            className="text-[20px] mt-[-7px] hover:text-maincolor"
+          >
+            {t("header.services")}
+          </Link>
+          <Link
+            to="/productpage"
+            className="text-[20px] mt-[-7px] hover:text-maincolor"
+          >
+            {t("header.products")}
+          </Link>
+          <Link
+            to="/blogpage"
+            className="mt-[-7px] text-[20px] hover:text-maincolor"
+          >
+            {t("header.blogger")}
+          </Link>
+          <Link
+            to="/spvc"
+            className="mt-[-7px] text-[20px] hover:text-maincolor"
+          >
+            {t("header.voucher")}
+          </Link>
+          <Link
+            to="/about"
+            className="mt-[-7px] text-[20px] hover:text-maincolor"
+          >
+            {t("header.about")}
+          </Link>
+          <Link
+            to="/contact"
+            className="mt-[-7px] text-[20px] hover:text-maincolor"
+          >
+            {t("header.owner")}
+          </Link>
           {userRole === "admin" && (
-            <Link to="/admin" className="flex justify-center mt-[-5px] items-center hover:text-maincolor">
+            <Link
+              to="/admin"
+              className="flex justify-center mt-[-5px] items-center hover:text-maincolor"
+            >
               {t("header.admin")} <IoIosReturnRight className="text-[26px]" />
             </Link>
           )}
           {userRole === "manager" && (
-            <Link to="/manager" className="flex justify-center mt-[-5px] items-center hover:text-maincolor">
+            <Link
+              to="/manager"
+              className="flex justify-center mt-[-5px] items-center hover:text-maincolor"
+            >
               {t("header.admin")} <IoIosReturnRight className="text-[26px]" />
             </Link>
           )}
         </nav>
+
         <div className="flex items-center space-x-4">
-          <div className="cursor-pointer hover:text-maincolor transition" onClick={handleSearchClick}>
+          <div
+            className="cursor-pointer hover:text-maincolor transition"
+            onClick={handleSearchClick}
+          >
             <IoMdSearch size={24} />
           </div>
           <div className="relative cursor-pointer hover:text-maincolor transition">
-            <Link to="/cart">
+            <div onClick={handleCartClick}>
               <div className="relative">
                 <IoBagHandleOutline size={24} />
                 {cartCount > 0 && (
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {cartCount} {/* Hiển thị số sản phẩm duy nhất */}
+                    {cartCount}
                   </span>
                 )}
               </div>
-            </Link>
+            </div>
           </div>
-          <div className="cursor-pointer hover:text-maincolor transition" onClick={handleLanguageChange}>
-            <img src={i18n.language === "vi" ? vi : en} alt="language" className="w-6 h-6 object-cover" />
+          <div
+            className="cursor-pointer hover:text-maincolor transition"
+            onClick={handleLanguageChange}
+          >
+            <img
+              src={i18n.language === "vi" ? vi : en}
+              alt="language"
+              className="w-6 h-6 object-cover"
+            />
           </div>
           <div className="relative">
             {userAvatar ? (
@@ -194,7 +273,7 @@ const Header = ({ className = '' }) => {
             {isMenu && (
               <div className="absolute right-0 mt-2 bg-white shadow-lg rounded-md w-40 py-2 border border-gray-200">
                 <ul className="text-sm text-gray-700">
-                  {userAvatar ? (
+                  {userAvatar && (
                     <>
                       <li
                         onClick={handleProfile}
@@ -218,13 +297,20 @@ const Header = ({ className = '' }) => {
                         Đăng xuất
                       </li>
                     </>
-                  ) : null}
+                  )}
                 </ul>
               </div>
             )}
           </div>
         </div>
       </div>
+
+      {showSearch && (
+        <div
+          ref={searchRef}>
+          <SearchPage  onClose={() => setShowSearch(false)}  />
+        </div>
+      )}
     </header>
   );
 };

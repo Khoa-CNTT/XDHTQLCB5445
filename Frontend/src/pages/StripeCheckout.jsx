@@ -6,6 +6,9 @@ const StripeCheckout = () => {
   const handleBackToHome = () => {
     navigate('/');
   }
+  const handleOrderTab = () => {
+    navigate('/profile', { state: { tab: 'orders' } });
+  }
   return (
     <div className="flex items-center justify-center ">
       <div className="flex flex-col items-center">
@@ -15,6 +18,7 @@ const StripeCheckout = () => {
         <div className="text-black text-xl font-semibold mt-4">Thanh toán thành công</div>
         <div className="text-black text-lg mt-2">Cảm ơn bạn đã đặt hàng!</div>
         <div className="text-black text-lg mt-2">Chúng tôi đã nhận được thanh toán của bạn.</div>
+        <button onClick={handleOrderTab}>Hãy bấm vào tôi để xem đơn hàng của bạn</button>
         <button className='bg-blue-400 mt-3 p-3' onClick={handleBackToHome}>Trở lại trang chủ</button>
       </div>
     </div>

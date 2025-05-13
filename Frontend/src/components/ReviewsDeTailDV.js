@@ -5,7 +5,7 @@ import { listReviewDV, removeReviewDV } from "../APIs/ReviewDVAPI";
 import { getUser } from "../APIs/userApi";
 import { useParams } from "react-router-dom";
 import { RxDotsVertical } from "react-icons/rx";
-import { errorToast, successToast, toastContainer } from "../utils/toast";
+import { errorToast, successToast,  } from "../utils/toast";
 import { jwtDecode } from "jwt-decode";
 
 const ReviewsDeTailDV = () => {
@@ -107,7 +107,7 @@ const ReviewsDeTailDV = () => {
 
   return (
     <div className="mt-8 pl-5">
-      {toastContainer()}
+      
       <h2 className="text-2xl font-bold text-gray-800 mb-4">Đánh giá dịch vụ</h2>
       <div className="bg-white p-6 rounded-lg shadow-md mb-4">
         <div className="flex items-center mb-4">

@@ -41,10 +41,8 @@ const placeOrder = async (req, res) => {
 
     const shippingFee = 30000; // Phí ship cố định
     const totalAmountBeforeDiscount = totalProductAmount + shippingFee;
-    // Áp dụng discount (đảm bảo discount là số âm hoặc 0)
     const finalTotalAmount = totalAmountBeforeDiscount - (discount > 0 ? discount : 0);
 
-    // --- Tạo đơn hàng mới trong DB ---
     const newOrder = new orderModel({
       userId,
       items: formattedItems,
@@ -52,23 +50,20 @@ const placeOrder = async (req, res) => {
       orderDate: new Date(),
       shippingAddress,
       paymentMethod, // Lưu phương thức thanh toán
-      paymentStatus: paymentMethod === 'cod' ? 'Chưa thanh toán' : 'Pending', // Trạng thái ban đầu
       note,
-      discount: discount > 0 ? discount : 0, // Lưu giá trị giảm giá
-      orderStatus: "Đang xử lý", // Trạng thái ban đầu của đơn hàng
+      discount: discount > 0 ? discount : 0,
+      orderStatus: "Đã thanh toán", 
     });
 
     const savedOrder = await newOrder.save();
 
-    // --- Xóa giỏ hàng sau khi đặt thành công ---
     await userModel.findByIdAndUpdate(userId, { cartData: {} });
     console.log(`Order ${savedOrder._id} created successfully for user ${userId}.`);
 
 
-    // --- Xử lý theo phương thức thanh toán ---
     if (paymentMethod === "cod") {
-      // Cập nhật trạng thái thanh toán cho COD
-      savedOrder.paymentStatus = "Chưa thanh toán";
+      savedOrder.paymentStatus = "Thanh toán khi nhận hàng";
+      savedOrder.orderStatus = "Đang xử lý"; 
       await savedOrder.save();
       console.log(`Order ${savedOrder._id} placed with COD.`);
       return res.json({
@@ -77,12 +72,10 @@ const placeOrder = async (req, res) => {
         orderId: savedOrder._id,
       });
     } else if (paymentMethod === "card") { // Stripe
-      // --- Code tạo session Stripe (giữ nguyên code cũ của bạn) ---
       const itemsWithPrice = items.map(item => ({
         price_data: {
           currency: "VND",
           product_data: { name: item.name },
-          // Stripe yêu cầu đơn vị nhỏ nhất (xu), nhưng VNPAY là đồng. Giữ nguyên cho Stripe
           unit_amount: Math.round((parseFloat(String(item.price).replace(/\./g, '').replace(',', '.')) || 0)), // Stripe cần số nguyên
         },
         quantity: Number(item.quantity),
@@ -127,15 +120,12 @@ const placeOrder = async (req, res) => {
         payment_method_types: ["card"],
         line_items,
         mode: "payment",
-        discounts, // Áp dụng coupon giảm giá
-        success_url: `${frontend_url}/verify?success=true&orderId=${savedOrder._id}`, // Truyền orderId về
+        discounts, 
+        success_url: `${frontend_url}/verify/success`, // Truyền orderId về
         cancel_url: `${frontend_url}/verify?success=false&orderId=${savedOrder._id}`, // Truyền orderId về
         metadata: {
           orderId: savedOrder._id.toString(),
-          // discount: discount.toString(), // Không cần nếu đã dùng coupon
         },
-        // Stripe không hỗ trợ VND tốt cho khách hàng test, cân nhắc dùng đơn vị tiền tệ khác nếu cần test với thẻ test Stripe
-        // currency: 'usd', // Nếu muốn test dễ hơn với thẻ test Stripe
       });
 
       console.log(`Stripe session created for Order ${savedOrder._id}. URL: ${session.url}`);
@@ -145,20 +135,14 @@ const placeOrder = async (req, res) => {
       });
 
     } else if (paymentMethod === "vnpay") {
-      // Cập nhật trạng thái cho VNPAY
-      savedOrder.paymentStatus = "Pending VNPAY";
       await savedOrder.save();
-
-      // Redirect người dùng hoặc trả về URL để frontend xử lý
-      // Logic tạo URL đã chuyển sang vnpayController.
-      // Frontend sẽ gọi API /api/vnpay/create_payment_url SAU khi có orderId từ đây.
       console.log(`Order ${savedOrder._id} awaiting VNPAY payment initiation.`);
       res.json({
         success: true,
         message: "Order created, proceed to VNPAY payment.",
-        orderId: savedOrder._id, // Trả về orderId để frontend gọi API tạo URL VNPAY
-        totalAmount: savedOrder.totalAmount, // Trả về số tiền để frontend gọi API tạo URL VNPAY
-        orderDescription: `Thanh toan don hang ${savedOrder._id}` // Mô tả đơn hàng
+        orderId: savedOrder._id, 
+        totalAmount: savedOrder.totalAmount, 
+        orderDescription: `Thanh toan don hang ${savedOrder._id}`
       });
 
     } else {
@@ -177,10 +161,6 @@ const placeOrder = async (req, res) => {
   }
 };
 
-
-// *** SỬA HÀM verifyOrder (nếu cần cho Stripe) ***
-// Hàm này dường như đang dùng cho Stripe dựa vào success_url/cancel_url
-// Có thể giữ nguyên hoặc điều chỉnh nếu muốn dùng chung cho VNPAY return (nhưng VNPAY return đã có controller riêng)
 const verifyOrder = async (req, res) => {
   const { orderId, success } = req.body; // Hoặc lấy từ query params tùy vào cách bạn thiết kế URL trả về
   console.log(`Verifying order: ${orderId}, Success: ${success}`);
@@ -194,10 +174,9 @@ const verifyOrder = async (req, res) => {
       return res.status(404).json({ success: false, message: "Order not found" });
     }
 
-    // Chỉ cập nhật nếu thanh toán qua Stripe và trạng thái đang chờ
-    if (order.paymentMethod === 'card' && order.paymentStatus === 'Pending') {
+    if (order.paymentMethod === 'card' && order.paymentStatus === 'Đã thanh toán') {
       if (success === 'true' || success === true) { // Kiểm tra cả string và boolean
-        await orderModel.findByIdAndUpdate(orderId, { paymentStatus: "Paid", orderStatus: "Đã xác nhận" });
+        await orderModel.findByIdAndUpdate(orderId, { paymentStatus: "Đã thanh toán qua Vnpay", orderStatus: "Đã thanh toán" });
         console.log(`Stripe Order ${orderId} verified as Paid.`);
         return res.json({ success: true, message: "Payment successful (Stripe)" });
       } else {
@@ -206,7 +185,6 @@ const verifyOrder = async (req, res) => {
         return res.json({ success: false, message: "Payment failed (Stripe)" });
       }
     } else {
-      // Nếu không phải Stripe hoặc trạng thái không phải Pending, không làm gì hoặc trả về trạng thái hiện tại
       console.log(`Order ${orderId} verification skipped (Method: ${order.paymentMethod}, Status: ${order.paymentStatus})`);
       return res.json({ success: order.paymentStatus === 'Paid', message: `Order status already ${order.paymentStatus}` });
     }

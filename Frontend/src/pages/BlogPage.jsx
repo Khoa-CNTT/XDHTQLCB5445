@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
-import { errorToast, toastContainer } from "../utils/toast";
+import { errorToast,  } from "../utils/toast";
 
 const BlogPage = () => {
     const [publishedBlogs, setPublishedBlogs] = useState([]);
@@ -33,7 +33,7 @@ const BlogPage = () => {
     return (
        <>
        <Header className="!bg-white !text-black !shadow-md" />
-       {toastContainer()}
+       
          <motion.div
             className="container m-auto px-2 mt-[40px] py-4"
             initial={{ opacity: 0, y: 50 }}

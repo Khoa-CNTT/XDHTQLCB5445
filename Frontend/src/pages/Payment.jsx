@@ -4,14 +4,14 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Divider, Image } from "antd";
 import { CreditCard, Truck, ArrowLeft, CheckCircle } from "lucide-react"; // Sử dụng icon từ Lucide
-import { errorToast, successToast, toastContainer } from "../utils/toast";
+import { errorToast, successToast } from "../utils/toast";
 import { placeOrder } from "../APIs/orderApi";
 import { jwtDecode } from "jwt-decode";
 import { getUser, updateUser } from "../APIs/userApi";
 import { redeemVoucher } from "../APIs/VoucherAPI";
+import vnpay from '../img/images.png'
 import axios from 'axios'; // Import axios để gọi API VNPAY
 
-// Component PaymentMethod (Giữ nguyên như code gốc của bạn, chỉ thay icon nếu muốn)
 const PaymentMethod = ({ id, name, icon, selected, onSelect }) => {
   return (
     <div
@@ -19,7 +19,6 @@ const PaymentMethod = ({ id, name, icon, selected, onSelect }) => {
       className={`flex items-center p-4 border rounded-lg cursor-pointer transition-all
       ${selected === id ? "border-blue-500 bg-blue-50" : "border-gray-200 hover:border-blue-300"}`}
     >
-      {/* Sử dụng icon được truyền vào */}
       <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 text-blue-600 mr-4">
         {icon}
       </div>
@@ -175,8 +174,6 @@ const Payment = () => {
 
   // *** SỬA LẠI handleSubmit ĐỂ TÍCH HỢP VNPAY CẨN THẬN ***
   const handleSubmit = async (e) => {
-    // Không cần e.preventDefault() vì button không có type="submit" trong form
-    // e.preventDefault(); // Có thể giữ lại nếu dùng thẻ form với onSubmit
 
     if (isSubmitting) return; // Ngăn chặn click nhiều lần
     setIsSubmitting(true);
@@ -186,16 +183,12 @@ const Payment = () => {
         setIsSubmitting(false);
         return;
       }
-
       const token = localStorage.getItem("token");
-      if (!token) {
-        errorToast("Vui lòng đăng nhập lại để đặt hàng");
+  if (!token) {
+        errorToast("Vui lòng đăng nhập để đặt hàng");
         setIsSubmitting(false);
-        navigate('/login');
         return;
       }
-
-      // Chuẩn bị dữ liệu đặt hàng (giống code gốc)
       const orderItems = products
         .filter((p) => cartItems[p._id] && cartItems[p._id] > 0) // Lọc sp hợp lệ
         .map((product) => ({
@@ -214,7 +207,7 @@ const Payment = () => {
 
       const orderData = {
         items: orderItems,
-        // totalAmount: total, // Bỏ qua, để backend tự tính toán lại cho chắc chắn
+        totalAmount: total, // Bỏ qua, để backend tự tính toán lại cho chắc chắn
         shippingAddress: {
           fullName: formData.firstName.trim() + " " + formData.lastName.trim(),
           phone: formData.phoneNumber.trim(),
@@ -228,44 +221,19 @@ const Payment = () => {
 
       // Gọi redeemVoucher trước (như code gốc hoạt động của bạn)
       // Lưu ý: Logic tốt hơn là redeem sau khi thanh toán thành công, nhưng làm theo code gốc trước
-      if (selectedVoucher) {
-        try {
-          console.log(`Attempting to redeem voucher: ${selectedVoucher.code}`);
-          await redeemVoucher(selectedVoucher.code);
-          console.log(`Voucher ${selectedVoucher.code} redeemed (pre-order).`);
-        } catch (voucherError) {
-          console.error("Failed to redeem voucher (pre-order):", voucherError.response?.data || voucherError.message);
-          // Không chặn đặt hàng nếu lỗi redeem, nhưng thông báo
-          errorToast(`Lỗi khi áp dụng voucher: ${voucherError.response?.data?.message || 'Lỗi không xác định'}. Đơn hàng vẫn tiếp tục.`);
-        }
+     if (selectedVoucher) {
+        await redeemVoucher(selectedVoucher.code);
       }
 
       // Cập nhật thông tin user (như code gốc)
-      try {
-        const resData = await updateUser(userId, {
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          phoneNumber: formData.phoneNumber,
-          address: formData.address
-        }, token);
-        // Không cần setFormData lại ở đây, vì sẽ chuyển trang
-        // if (resData.success) { setFormData(resData.data); }
-      } catch (updateErr) {
-        console.warn("Could not update user info during checkout:", updateErr);
+      const resData = await updateUser(userId, formData, token);
+      if (resData.success) {
+        setFormData(resData.data);
       }
-
-
-      // Gọi API placeOrder (như code gốc)
-      console.log("Placing order with data:", orderData);
       const response = await placeOrder(orderData, token);
-      console.log("Place order response:", response);
-
       if (response.success) {
-        // Đơn hàng đã được tạo thành công ở backend
-        const orderId = response.orderId; // Lấy orderId trả về
-        const finalTotalAmount = response.totalAmount || total; // Ưu tiên total từ backend nếu có
-
-        // Xử lý tiếp theo dựa trên phương thức thanh toán
+        const orderId = response.orderId; 
+        const finalTotalAmount = response.totalAmount || total; 
         if (selectedPayment === "card") { // Stripe
           if (response.session_url) {
             successToast("Đặt hàng thành công! Đang chuyển hướng đến Stripe...");
@@ -273,25 +241,26 @@ const Payment = () => {
             window.location.href = response.session_url;
           } else {
             errorToast("Đặt hàng thành công nhưng không nhận được link thanh toán Stripe.");
-            // Có thể navigate về my-orders hoặc cart
             navigate('/my-orders');
           }
         } else if (selectedPayment === "cod") { // COD
           successToast("Đặt hàng COD thành công!");
           localStorage.removeItem("cart"); // Xóa cart
-          // Chuyển đến trang xác nhận hoặc lịch sử đơn hàng
-          navigate("/my-orders"); // Chuyển đến trang đơn hàng của tôi
-          /* // Hoặc dùng trang xác nhận như code gốc nếu bạn có trang đó
-          navigate("/order-confirmation", {
+         navigate("/order-confirmation", {
             state: {
-              // ... dữ liệu cần thiết cho trang xác nhận
-              orderId: orderId,
+              orderDetails: {
+                ...formData,
+                paymentMethod: selectedPayment,
+                items: orderItems,
+                total,
+                orderId: response.orderId,
+                discount: discount,
+                voucher: selectedVoucher,
+              },
             },
           });
-          */
         } else if (selectedPayment === "vnpay") { // *** XỬ LÝ VNPAY ***
-          console.log("Processing VNPAY payment for order:", orderId);
-          // Gọi API backend để tạo URL thanh toán VNPAY
+
           try {
             const vnpayApiUrl = `${process.env.REACT_APP_API_URL || 'http://localhost:4000'}/api/vnpay/create_payment_url`;
             const vnpayPayload = {
@@ -354,7 +323,6 @@ const Payment = () => {
   // --- PHẦN RENDER UI ---
   return (
     <div className=" bg-gray-50 py-8 px-4 sm:px-6 lg:px-8 min-h-screen mt-16"> {/* Thêm mt-16 nếu header fixed */}
-      {toastContainer()}
       <div className="max-w-6xl mx-auto">
         {/* Header và Progress bar (Giữ nguyên) */}
         <div className="text-center mb-8">
@@ -423,7 +391,6 @@ const Payment = () => {
                 </div>
               </div>
 
-              {/* Phương thức thanh toán */}
               <div className="p-6">
                 <div className="flex items-center mb-4">
                   <CreditCard className="text-blue-600 mr-2" size={20} />
@@ -433,25 +400,22 @@ const Payment = () => {
                   {/* Stripe (Card) */}
                   <PaymentMethod
                     id="card"
-                    name="Thanh toán bằng Thẻ ngân hàng (Stripe)" // Đổi tên cho rõ ràng
-                    icon={<CreditCard size={20} />} // Dùng icon Lucide
+                    name="Thanh toán bằng Thẻ ngân hàng (Stripe)" 
+                    icon={<CreditCard size={20} />}
                     selected={selectedPayment}
                     onSelect={setSelectedPayment}
                   />
-                  {/* COD */}
                   <PaymentMethod
                     id="cod"
                     name="Thanh toán khi nhận hàng (COD)"
-                    icon={<Truck size={20} />} // Dùng icon Lucide
+                    icon={<Truck size={20} />} 
                     selected={selectedPayment}
                     onSelect={setSelectedPayment}
                   />
-                  {/* VNPAY */}
                   <PaymentMethod
                     id="vnpay"
                     name="Thanh toán qua VNPAY"
-                    // ** Đảm bảo có file logo trong public/images **
-                    icon={<img src="/images/vnpay_logo.png" alt="VNPAY" className="h-6 w-auto object-contain" />}
+                    icon={<img src={vnpay} alt="VNPAY" className="h-6 w-auto object-contain" />}
                     selected={selectedPayment}
                     onSelect={setSelectedPayment}
                   />
@@ -459,15 +423,12 @@ const Payment = () => {
               </div>
             </div>
           </div>
-
-          {/* Cột phải: Order Summary (Giữ nguyên) */}
           <div className="lg:w-1/3">
             <div className="bg-white rounded-xl shadow-sm overflow-hidden sticky top-20"> {/* Điều chỉnh top nếu header fixed */}
               <div className="p-6 border-b">
                 <h2 className="text-xl font-semibold text-gray-800">Đơn hàng của bạn</h2>
               </div>
               <div className="p-6">
-                {/* Items */}
                 <div className="space-y-4 mb-6 max-h-60 overflow-y-auto pr-2">
                   {products
                     .filter((p) => cartItems[p._id])
@@ -475,7 +436,7 @@ const Payment = () => {
                       <div key={product._id} className="flex items-start gap-4">
                         <div className="flex-shrink-0 w-16 h-16 rounded-md overflow-hidden border border-gray-200">
                           <Image
-                            src={product.ImagePD ? `${process.env.REACT_APP_API_URL || 'http://localhost:4000'}/images/${product.ImagePD}` : '/placeholder.png'}
+                            src={product.ImagePD }
                             alt={product.ProductName}
                             className="w-full h-full object-cover"
                             preview={false}
@@ -492,7 +453,6 @@ const Payment = () => {
                       </div>
                     ))}
                 </div>
-                {/* Totals */}
                 <div className="space-y-3 border-t pt-4">
                   <div className="flex justify-between">
                     <span className="text-sm text-gray-600">Tạm tính</span>
@@ -514,10 +474,9 @@ const Payment = () => {
                     <span className="text-xl font-bold text-blue-600">{total.toLocaleString("vi-VN")}₫</span>
                   </div>
                 </div>
-                {/* Buttons */}
                 <div className="mt-6 space-y-3">
                   <button
-                    type="button" // Quan trọng: để không submit form nếu dùng thẻ <form>
+                    type="button" 
                     onClick={handleSubmit}
                     disabled={isSubmitting || total <= 0 || Object.keys(cartItems).length === 0}
                     className={`w-full px-4 py-3 rounded-lg font-semibold text-white transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${isSubmitting || total <= 0 || Object.keys(cartItems).length === 0

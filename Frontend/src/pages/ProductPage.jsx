@@ -1,17 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import OneProduct from "../components/OneProduct";
 import { getProducts } from "../APIs/ProductsApi";
 import { addToCart } from "../APIs/cartApi";
-import { errorToast, successToast, toastContainer } from "../utils/toast";
+import { errorToast, successToast } from "../utils/toast";
 import { motion } from "framer-motion";
 import { Button, Spin } from "antd";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { CartContext } from "../context/CartContext";
 
 const ProductsPage = () => {
+  const { t } = useTranslation();
   const [filter, setFilter] = useState("Tất cả");
   const [data, setData] = useState([]);
+  const { fetchCartCount } = useContext(CartContext);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
   const [cartMessage, setCartMessage] = useState("");
@@ -47,21 +51,30 @@ const ProductsPage = () => {
       ? data
       : data.filter((product) => product.Category === filter);
 
-  const handleAddToCart = async (productId, quantity) => {
-    try {
+   const handleAddToCart = async (productId, quantity) => {
+        try {
+          const role = localStorage.getItem("role"); 
+      const token = localStorage.getItem("token");
+      if (!token) {
+        errorToast(t("products.pleaseLogin"));
+        setTimeout(() => {
+          window.location.href = "/sign-in";
+        }, 2000);
+        return;
+      }
+      if (role !== "user") {
+        errorToast(t("products.onlyUsersCanOrder"));
+        return;
+      }
       const res = await addToCart(productId, quantity);
-
       if (res?.success) {
-        successToast("Sản phẩm đã được thêm vào giỏ hàng!");
+        successToast(t("products.addToCartSuccess"));
+        fetchCartCount();
       }
     } catch (error) {
-      if (error?.response?.status === 401) {
-        errorToast("Vui lòng đăng nhập để thêm vào giỏ hàng!");
-      } else {
-        errorToast("Sản phẩm đã hết hàng!");
-      }
+        errorToast(t("products.outOfStock"));
     }
-  };
+    };
 
   return (
     <>
@@ -73,8 +86,6 @@ const ProductsPage = () => {
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 1.2 }}
       >
-        {toastContainer()}
-
         <section className="px-10 py-6">
           <nav className="text-sm text-gray-500 mt-4">
             <Link to="/" className="hover:underline">

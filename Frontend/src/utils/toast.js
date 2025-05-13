@@ -10,7 +10,8 @@ const successToast = (message) => {
     draggable: true,
     progress: undefined,
   });
-}
+};
+
 const errorToast = (message) => {
   toast.error(message, {
     position: "top-right",
@@ -22,20 +23,20 @@ const errorToast = (message) => {
     progress: undefined,
   });
 };
-const toastContainer = () => {
-    return (
-        <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        className={"mt-[50px]"}
-        pauseOnHover
-        />
-    );
-    }
-export { successToast, errorToast, toastContainer };
+
+export const ToastContainerWrapper = () => (
+  <ToastContainer
+    position="top-right"
+    autoClose={3000}
+    hideProgressBar={false}
+    newestOnTop={false}
+    closeOnClick
+    rtl={false}
+    pauseOnFocusLoss
+    draggable
+    className={"mt-[50px]"}
+    pauseOnHover
+  />
+);
+
+export { successToast, errorToast };

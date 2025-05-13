@@ -43,25 +43,25 @@ export const EmployeeBrand = () => {
     const fetchManagerBranch = async () => {
       try {
         const userId = localStorage.getItem("userId");
-  
+
         const [managerRes, branchRes] = await Promise.all([
           listmanager(),
           listBranch(),
         ]);
-  
+
         const managerList = managerRes?.data || [];
         const branchList = branchRes?.data || [];
-  
+
         const currentManager = managerList.find((m) => {
           return (
             m.UserID === userId ||
             (typeof m.UserID === "object" && m.UserID?._id === userId)
           );
         });
-  
+
         if (currentManager) {
           setManagerBranchId(currentManager.BranchID);
-  
+
           const branchInfo = branchList.find(
             (b) => b._id === currentManager.BranchID
           );
@@ -74,10 +74,9 @@ export const EmployeeBrand = () => {
         console.error(err);
       }
     };
-  
+
     fetchManagerBranch();
   }, []);
-  
 
   const fetchData = async () => {
     if (!managerBranchId) return;
@@ -193,6 +192,14 @@ export const EmployeeBrand = () => {
         const user = dataUser.find((u) => u._id === record.UserID);
         return user ? `${user.firstName}` : "Chưa có nhân viên";
       },
+      filters: dataUser.map((user) => ({
+        text: `${user.firstName} ${user.lastName}`,
+        value: user._id,
+      })),  
+      onFilter: (value, record) => {
+        const user = dataUser.find((u) => u._id === record.UserID);
+        return user ? user._id === value : false;
+      },
     },
     {
       title: "Vị trí",
@@ -212,6 +219,11 @@ export const EmployeeBrand = () => {
       title: "Trạng thái",
       dataIndex: "Status",
       key: "Status",
+      filters: [
+        { text: "Đang làm việc", value: "Đang làm việc" },
+        { text: "Tạm nghỉ", value: "Tạm nghỉ" },
+      ],
+      onFilter: (value, record) => record.Status.indexOf(value) === 0,
     },
     {
       title: "Hành động",
@@ -240,13 +252,6 @@ export const EmployeeBrand = () => {
     },
   ];
 
-  const filteredUsers = selectedBranch
-    ? dataEmployee
-        .filter((emp) => emp.BranchID === selectedBranch)
-        .map((emp) => emp.UserID)
-    : [];
-
-
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-4">
@@ -260,37 +265,35 @@ export const EmployeeBrand = () => {
       </div>
 
       <div className="flex items-center gap-4 mb-4">
-  <Select
-    placeholder="Chọn nhân viên để xem lịch"
-    style={{ width: 250 }}
-    onChange={(value) => setSelectedUserId(value)}
-    value={selectedUserId}
-    allowClear
-  >
-    {dataUser
-      .filter((user) =>
-        dataEmployee.some(
-          (emp) =>
-            emp.UserID === user._id || emp.UserID?._id === user._id
-        )
-      )
-      .map((user) => (
-        <Option key={user._id} value={user._id}>
-          {user.firstName}
-        </Option>
-      ))}
-  </Select>
+        <Select
+          placeholder="Chọn nhân viên để xem lịch"
+          style={{ width: 250 }}
+          onChange={(value) => setSelectedUserId(value)}
+          value={selectedUserId}
+          allowClear
+        >
+          {dataUser
+            .filter((user) =>
+              dataEmployee.some(
+                (emp) => emp.UserID === user._id || emp.UserID?._id === user._id
+              )
+            )
+            .map((user) => (
+              <Option key={user._id} value={user._id}>
+                {user.firstName} {user.lastName}
+              </Option>
+            ))}
+        </Select>
 
-  <Button
-    type="default"
-    icon={<EyeFilled />}
-    disabled={!selectedUserId}
-    onClick={() => setViewScheduleFor(selectedUserId)}
-  >
-    Xem lịch làm việc
-  </Button>
-</div>
-
+        <Button
+          type="default"
+          icon={<EyeFilled />}
+          disabled={!selectedUserId}
+          onClick={() => setViewScheduleFor(selectedUserId)}
+        >
+          Xem lịch làm việc
+        </Button>
+      </div>
 
       <Table
         columns={columns}
@@ -331,11 +334,23 @@ export const EmployeeBrand = () => {
             rules={[{ required: true, message: "Vui lòng chọn nhân viên" }]}
           >
             <Select placeholder="Chọn nhân viên">
-              {dataUser.map((user) => (
-                <Option key={user._id} value={user._id}>
-                  {user.firstName}
-                </Option>
-              ))}
+              {dataUser
+                .filter((user) => {
+                  const isEditing = !!editingEmployee;
+                  const isAssignedElsewhere = dataEmployee.some((emp) => {
+                    const isSameUser =
+                      emp.UserID === user._id || emp.UserID?._id === user._id;
+                    const isDifferentRecord =
+                      !isEditing || emp._id !== editingEmployee._id;
+                    return isSameUser && isDifferentRecord;
+                  });
+                  return !isAssignedElsewhere;
+                })
+                .map((user) => (
+                  <Option key={user._id} value={user._id}>
+                    {user.firstName} {user.lastName}
+                  </Option>
+                ))}
             </Select>
           </Form.Item>
 
@@ -389,5 +404,4 @@ export const EmployeeBrand = () => {
     </div>
   );
 };
-
 export default EmployeeBrand;

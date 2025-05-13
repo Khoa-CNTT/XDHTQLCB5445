@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Tag, Typography, message } from 'antd';
 import { getOrders } from '../APIs/orderApi';
-import { errorToast, toastContainer } from '../utils/toast';
+import { errorToast,  } from '../utils/toast';
 
 const { Text } = Typography;
 
@@ -123,10 +123,7 @@ const MyOrdersTab = () => {
         const normalizedStatus = status ? status.toLowerCase() : 'unknown';
         let color, text;
         switch (normalizedStatus) {
-          case 'đã giao':
-            color = 'green';
-            text = 'Hoàn thành';
-            break;
+
           case 'đang giao':
             color = 'blue';
             text = 'Đang giao';
@@ -138,6 +135,18 @@ const MyOrdersTab = () => {
           case 'đã hủy':
             color = 'red';
             text = 'Đã hủy';
+            break;
+          case 'chờ thanh toán':
+            color = 'purple';
+            text = 'Chờ thanh toán';
+            break;
+          case 'đã hoàn tiền':
+            color = 'cyan';
+            text = 'Đã hoàn tiền';
+            break;
+          case 'đã thanh toán':
+            color = 'green';
+            text = 'Đã thanh toán';
             break;
           default:
             color = 'gray';
@@ -151,7 +160,7 @@ const MyOrdersTab = () => {
 
   return (
     <div className="max-w-7xl mx-auto space-y-[-7px]">
-      {toastContainer()}
+      
       <h2 className="text-2xl font-semibold text-gray-800">Đơn Hàng Của Tôi</h2>
       <div className="bg-white border border-gray-100 rounded-2xl shadow-md p-6">
         <Table

@@ -17,6 +17,7 @@ import { IoHomeOutline } from 'react-icons/io5';
 import { listmanager } from '../APIs/manager';
 import EmployeeBrand from '../components/ComponentManagement/EmployeeBrand';
 import BookingBrand from '../components/ComponentManagement/BookingBrand';
+import CategoryManagement from '../components/ComponentManagement/CategoryManagement';
 
 const Manager = () => {
   const navigate = useNavigate();
@@ -70,6 +71,8 @@ const Manager = () => {
         return <VoucherManagement />;
       case 'booking':
         return <BookingBrand />;
+      case 'category':
+        return <CategoryManagement />;
       default:
         return <Dashboard />;
     }
@@ -82,7 +85,6 @@ const Manager = () => {
 
   const generateMenuItems = () => {
     const commonItems = [
-      { key: 'dashboard', label: 'Dashboard', icon: <TbLayoutDashboard style={{ fontSize: '24px' }} /> },
       { key: 'home', label: 'Trang người dùng', icon: <IoHomeOutline style={{ fontSize: '24px' }} /> },
     ];
 
@@ -107,6 +109,7 @@ const Manager = () => {
           { key: 'product', label: 'Quản lý sản phẩm' },
           { key: 'order', label: 'Quản lý đơn hàng' },
           { key: 'voucher', label: 'Quản lý voucher' },
+          { key: 'category', label: 'Quản lý danh mục' },
         ],
       });
     }

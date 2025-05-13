@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import VoucherCard from "../components/VoucherCard";
 import { getVouchers } from "../APIs/VoucherAPI";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { toastContainer, successToast, errorToast } from "../utils/toast";
+import { successToast, errorToast } from "../utils/toast";
 import Header from "../components/Header";
 
 // const API_BASE_URL = "https://backend-fu3h.onrender.com/api/";
-const API_BASE_URL = 'http://localhost:4000/api'; 
+const API_BASE_URL = 'http://localhost:4000/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -23,13 +23,12 @@ const SuperVouchers = () => {
   const [filterType, setFilterType] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const navigate = useNavigate();
   const fetchVouchers = async () => {
     try {
       setLoading(true);
-      const data = await getVouchers({
-        applicableTo: filterType === "all" ? "" : filterType,
-      });
+      // fetch tất cả vouchers, filter sau client-side
+      const data = await getVouchers({});
       const formattedVouchers = data.map((voucher) => ({
         _id: voucher._id,
         image:
@@ -65,6 +64,7 @@ const SuperVouchers = () => {
             : null,
         startDate: voucher.startDate,
         endDate: voucher.endDate,
+        name: voucher.name,
         minimumAmount: voucher.minimumAmount,
         maximumDiscount: voucher.maximumDiscount,
         usageLimit: voucher.usageLimit,
@@ -72,12 +72,7 @@ const SuperVouchers = () => {
         applicableTo: voucher.applicableTo,
       }));
       setVouchers(formattedVouchers);
-      const filtered = formattedVouchers.filter(
-        (voucher) =>
-          voucher.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          voucher.code.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredVouchers(filtered);
+      setFilteredVouchers(formattedVouchers);
     } catch (err) {
       setError("Không thể tải dữ liệu voucher. Vui lòng thử lại sau.");
     } finally {
@@ -87,7 +82,19 @@ const SuperVouchers = () => {
 
   useEffect(() => {
     fetchVouchers();
-  }, [filterType, searchTerm]);
+  }, []);
+
+  useEffect(() => {
+    const filtered = vouchers.filter((voucher) => {
+      const matchesType =
+        filterType === "all" || voucher.applicableTo === filterType;
+      const matchesSearch =
+        voucher.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        voucher.code.toLowerCase().includes(searchTerm.toLowerCase());
+      return matchesType && matchesSearch;
+    });
+    setFilteredVouchers(filtered);
+  }, [vouchers, filterType, searchTerm]);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
@@ -100,8 +107,19 @@ const SuperVouchers = () => {
   const handleSaveVoucher = async (voucher) => {
     try {
       const token = localStorage.getItem("token");
+      const role = localStorage.getItem("role");
       if (!token) {
         errorToast("Bạn cần đăng nhập để lưu voucher!");
+        setTimeout(() => {
+          navigate("/sign-in");
+        }, 2000);
+        return;
+      }
+      if (role !== "user") {
+        errorToast("Chỉ người dùng mới có thể lưu voucher!");
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
         return;
       }
       await api.post(
@@ -111,20 +129,38 @@ const SuperVouchers = () => {
       );
       successToast(`Đã lưu voucher ${voucher.code}!`);
     } catch (error) {
-      errorToast("Lỗi khi lưu voucher");
+      errorToast("Voucher đã được lưu trước đó");
     }
   };
+  const handleViewVoucher = (voucher) => {
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    if (!token) {
+      errorToast("Bạn cần đăng nhập để xem voucher!");
+      setTimeout(() => {
+        navigate("/sign-in");
+      }, 2000);
+      return;
+    }
+      if (role !== "user") {
+      errorToast("Chỉ người dùng mới có thể xem voucher!");
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+      return;
+    }
+    navigate('/myvc')
+    
+  }
 
   return (
     <>
       <Header className="!bg-white !text-black !shadow-md" />
-      <div className=" bg-gray-100 mt-16 p-10">
-        {toastContainer()}
+      <div className="bg-gray-100 mt-16 p-10">
         <div className="bg-maincolor text-white text-center py-8">
           <h1 className="text-4xl font-bold">Chợ Vouchers</h1>
           <p className="mt-2 text-lg">
-            Khám phá các ưu đãi độc quyền dành riêng cho bạn. Tiết kiệm ngay hôm
-            nay!
+            Khám phá các ưu đãi độc quyền dành riêng cho bạn. Tiết kiệm ngay hôm nay!
           </p>
           <button className="mt-4 bg-white text-blue-900 px-4 py-2 rounded-full flex items-center mx-auto">
             <svg
@@ -141,7 +177,7 @@ const SuperVouchers = () => {
                 d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
               ></path>
             </svg>
-            <Link to="/myvc">Xem vouchers của tôi</Link>
+            <div onClick={handleViewVoucher}>Xem vouchers của tôi</div>
           </button>
         </div>
 
@@ -188,7 +224,7 @@ const SuperVouchers = () => {
                 <div key={voucher._id}>
                   <VoucherCard
                     voucher={voucher}
-                    onSaveVoucher={handleSaveVoucher}
+                    onSaveVoucher={() => handleSaveVoucher(voucher)}
                   />
                 </div>
               ))}

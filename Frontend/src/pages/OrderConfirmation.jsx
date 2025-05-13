@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Card, Button, Divider, Typography, Image, Steps } from 'antd';
 import { CheckCircle, Home, ShoppingBag } from 'lucide-react';
-import { toastContainer } from '../utils/toast';
+import {  } from '../utils/toast';
 import { getOrders } from '../APIs/orderApi';
 
 const { Title, Text } = Typography;
@@ -83,7 +83,7 @@ const OrderConfirmation = () => {
 
     return (
         <div className=" bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-            {toastContainer()}
+            
             <div className="max-w-4xl mx-auto">
                 <div className="text-center mb-8">
                     <CheckCircle className="mx-auto text-green-500" size={48} strokeWidth={1.5} />

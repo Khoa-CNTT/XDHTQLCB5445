@@ -16,7 +16,6 @@ export const addVoucher = async (voucherData) => {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
-
 };
 
 export const getVouchers = async ({ applicableTo = '', search = '' } = {}) => {
@@ -25,13 +24,11 @@ export const getVouchers = async ({ applicableTo = '', search = '' } = {}) => {
     if (search) params.search = search;
     const response = await api.get('/vouchers', { params });
     return response.data;
-
 };
 
 export const getVoucherByCode = async (voucherCode) => {
     const response = await api.get(`/vouchers/code/${voucherCode}`);
     return response.data;
-  
 };
 
 export const deleteVoucher = async (id) => {
@@ -40,7 +37,6 @@ export const deleteVoucher = async (id) => {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
-  
 };
 
 export const redeemVoucher = async (voucherCode) => {
@@ -49,7 +45,6 @@ export const redeemVoucher = async (voucherCode) => {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
-
 };
 
 export const updateVoucher = async (id, voucherData) => {
@@ -58,5 +53,4 @@ export const updateVoucher = async (id, voucherData) => {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data;
-
 };

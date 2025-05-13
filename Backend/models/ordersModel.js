@@ -8,7 +8,7 @@ const orderSchema = new mongoose.Schema(
     shippingAddress: { type: Object, required: true },
     orderStatus: { type: String, default: "Đang xử lý" },
     orderDate: { type: Date, default: Date.now },
-    paymentMethod: { type: String, required: true }, // Có thể là 'card'/'cod'/'vnpay'
+    paymentMethod: { type: String, required: true },
     paymentStatus: { type: String, default: "Đang xử lý" },
     discount: { type: Number, default: 0 },
     note: { type: String },

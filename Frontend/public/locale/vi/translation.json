@@ -6,7 +6,7 @@
     "bookNow": "Đặt ngay",
     "bookings": "Đặt chỗ",
     "about": "Giới thiệu",
-    "owner": "Nhóm sở hữu",
+    "owner": "Bác sĩ",
     "searchPlaceholder": "Tìm kiếm...",
     "wishlist": "Danh sách yêu thích",
     "cart": "Giỏ hàng",
@@ -41,7 +41,8 @@
     "addToCartSuccess": "Sản phẩm đã được thêm vào giỏ hàng!",
     "pleaseLogin": "Vui lòng đăng nhập để thêm vào giỏ hàng!",
     "outOfStock": "Sản phẩm đã hết hàng!",
-    "noProducts": "Không có sản phẩm nào trong danh mục này."
+    "noProducts": "Không có sản phẩm nào trong danh mục này.",
+    "onlyUsersCanOrder": "Chỉ người dùng đã đăng nhập mới có thể đặt hàng."
   },
   "services": {
     "noServices": "Không có dịch vụ nào trong danh mục này."

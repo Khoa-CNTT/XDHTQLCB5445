@@ -8,7 +8,7 @@ import {
 import { TbLayoutDashboard } from 'react-icons/tb';
 import { GrUserManager } from 'react-icons/gr';
 import { RiAdminLine } from 'react-icons/ri';
-import { BrandManagement } from '../components/ComponentManagement/BrandManagement';
+import  BrandManagement  from '../components/ComponentManagement/BrandManagement';
 import { EmployeeManagement } from '../components/ComponentManagement/EmployeeManagement';
 import ServiceManagement from '../components/ComponentManagement/ServiceManagement';
 import ProductManagement from '../components/ComponentManagement/ProductManagement';
@@ -21,11 +21,10 @@ import Dashboard from '../components/ComponentManagement/Dashboard';
 import { IoHomeOutline } from 'react-icons/io5';
 import BookingManagement from '../components/ComponentManagement/BookingManagement';
 import ReportForm from '../components/ComponentManagement/ReportForm';
-import ManagerManagement from '../components/ComponentManagement/ManagerManagement';
 import CategoryManagement from '../components/ComponentManagement/CategoryManagement';
 
 const items = [
-  { key: 'dashboard', label: 'Dashboard', icon: <TbLayoutDashboard style={{ fontSize: '24px' }} /> },
+  // { key: 'dashboard', label: '', icon: <TbLayoutDashboard style={{ fontSize: '24px' }} /> },
   {
     key: 'home',
     label: 'Trang người dùng',
@@ -56,7 +55,6 @@ const items = [
       { key: 'banner', label: 'Banner trang chủ' },
       { key: 'account', label: 'Quản lý tài khoản' },
       { key: 'brand', label: 'Quản lý chi nhánh' },
-      { key: 'manager', label: 'Quản lý Manager' },
       { key: 'report', label: 'Báo cáo, thống kê' },
     ],
   },
@@ -97,8 +95,6 @@ const Admin = () => {
         return <BookingManagement />;
       case 'report':
         return <ReportForm />;
-      case 'manager':
-        return <ManagerManagement />;
       case 'category':
         return <CategoryManagement />;
       default:

@@ -5,7 +5,7 @@ import { addReviewDV } from "../APIs/ReviewDVAPI";
 import { MdOutlineStarPurple500 } from "react-icons/md";
 import { jwtDecode } from 'jwt-decode';
 import { getServiceById } from '../APIs/ServiceAPI';
-import { errorToast, successToast, toastContainer } from '../utils/toast';
+import { errorToast, successToast,  } from '../utils/toast';
 
 export const ReviewDV = ({ setLoading, onReviewSubmitted }) => {
   const [rating, setRating] = useState(0);
@@ -67,6 +67,19 @@ export const ReviewDV = ({ setLoading, onReviewSubmitted }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const token = localStorage.getItem("token");
+    const role = localStorage.getItem("role");
+    if (!token) {
+      errorToast("Bạn cần đăng nhập để gửi đánh giá.");
+      setTimeout(() => {
+        window.location.href = "/sign-in";
+      }, 2000);
+      return;
+    }
+    if (role !== "user") {
+      errorToast("Chỉ người dùng mới có thể gửi đánh giá.");
+      return;
+    }
     if (!rating) {
       return errorToast("Vui lòng đánh giá rating.");
     }
@@ -109,7 +122,7 @@ export const ReviewDV = ({ setLoading, onReviewSubmitted }) => {
 
   return (
     <div className="max-w-md mx-auto p-4 shadow-md rounded border mt-4">
-      {toastContainer()}
+      
       <h1 className="text-2xl font-bold mb-4">Đánh giá sản phẩm</h1>
 
       {userFullName && (

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import VoucherCard from '../components/VoucherCard';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { toastContainer, errorToast, successToast } from '../utils/toast';
+import { errorToast, successToast } from '../utils/toast';
 import Header from '../components/Header';
 
 // const API_BASE_URL = 'https://backend-fu3h.onrender.com/api/';
@@ -35,7 +35,6 @@ const MyVouchers = () => {
       const response = await api.get('/vouchers/user', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // Format dữ liệu voucher để đồng bộ với VoucherCard
       const formattedVouchers = response.data.map((voucher) => ({
         ...voucher,
         image: 'https://t3.ftcdn.net/jpg/03/24/14/88/360_F_324148849_jZw2PUBaeKGZWahhJ6aS4ajBdrdCoZ5N.jpg',
@@ -86,7 +85,7 @@ const MyVouchers = () => {
     <>
     <Header className="!bg-white !text-black !shadow-md" />
       <div className="mt-16 p-10  bg-gray-100">
-      {toastContainer()}
+      
       <div className="container mx-auto py-6">
         <div className="flex justify-between items-center mb-4">
           <div>
@@ -134,11 +133,12 @@ const MyVouchers = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {filteredVouchers.map((voucher) => (
               <div key={voucher._id} className="relative">
-                <VoucherCard voucher={voucher} />
+                <VoucherCard showSaveButton={false}  voucher={voucher} />
                 <button
                   onClick={() => handleRemoveVoucher(voucher._id)}
-                  className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-full"
+                  className="absolute top-2 right-1 bg-red-500 text-white px-2 py-1 rounded-full"
                 >
+                
                   Xóa
                 </button>
               </div>

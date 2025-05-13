@@ -94,27 +94,34 @@ export const createPaymentUrl = async (req, res) => {
 // Hàm xử lý VNPAY Return URL
 export const vnpayReturn = async (req, res) => {
     let vnp_Params = req.query;
-    let secureHash = vnp_Params['vnp_SecureHash'];
+    const secureHash = vnp_Params['vnp_SecureHash'];
 
-    // Xóa param hash để kiểm tra chữ ký
+    // Xoá các param hash để kiểm tra chữ ký
     delete vnp_Params['vnp_SecureHash'];
-    delete vnp_Params['vnp_SecureHashType']; // Nếu có
+    delete vnp_Params['vnp_SecureHashType'];
 
     vnp_Params = sortObject(vnp_Params);
 
-    let secretKey = process.env.VNPAY_HASH_SECRET;
-    let signData = qs.stringify(vnp_Params, { encode: false });
-    let hmac = crypto.createHmac("sha512", secretKey);
-    let signed = hmac.update(Buffer.from(signData, 'utf-8')).digest("hex");
+    const secretKey = process.env.VNPAY_HASH_SECRET;
+    const signData = qs.stringify(vnp_Params, { encode: false });
+    const hmac = crypto.createHmac("sha512", secretKey);
+    const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest("hex");
 
     const clientReturnUrlBase = process.env.CLIENT_URL || 'http://localhost:3000';
-    let redirectUrl = `${clientReturnUrlBase}/payment-status`; // Trang frontend hiển thị kết quả
+    let redirectUrl = `${clientReturnUrlBase}/payment-status`;
+    let success = false;
+    let message = '';
 
     if (secureHash === signed) {
-        let orderId = vnp_Params['vnp_TxnRef'].split('_')[0]; // Lấy orderId từ vnp_TxnRef
-        let rspCode = vnp_Params['vnp_ResponseCode'];
-        let message = '';
-        let success = false;
+        const vnpTxnRef = vnp_Params['vnp_TxnRef'];
+        if (!vnpTxnRef || !vnpTxnRef.includes('_')) {
+            console.log('VNPAY Return - Invalid vnp_TxnRef:', vnpTxnRef);
+            message = 'Mã đơn hàng không hợp lệ';
+            return res.redirect(`${redirectUrl}/failed?message=${encodeURIComponent(message)}`);
+        }
+
+        const orderId = vnpTxnRef.split('_')[0];
+        const rspCode = vnp_Params['vnp_ResponseCode'];
 
         console.log(`VNPAY Return - OrderId: ${orderId}, RspCode: ${rspCode}`);
 
@@ -122,10 +129,9 @@ export const vnpayReturn = async (req, res) => {
             const order = await orderModel.findById(orderId);
             if (order) {
                 if (rspCode === '00') {
-                    // Chỉ cập nhật nếu trạng thái chưa phải là Paid (tránh IPN và Return cùng cập nhật)
                     if (order.paymentStatus !== 'Paid') {
-                        order.paymentStatus = 'Paid';
-                        order.orderStatus = 'Đã xác nhận'; // Hoặc trạng thái phù hợp
+                        order.paymentStatus = 'Thanh toán qua VNPAY';
+                        order.orderStatus = 'Đã thanh toán'; // Cập nhật trạng thái đơn hàng
                         await order.save();
                         console.log(`VNPAY Return - Order ${orderId} updated to Paid.`);
                     } else {
@@ -134,37 +140,33 @@ export const vnpayReturn = async (req, res) => {
                     message = 'Giao dịch thành công';
                     success = true;
                 } else {
-                    // Giao dịch không thành công
-                    if (order.paymentStatus !== 'Paid') { // Không cập nhật nếu đã thanh toán thành công trước đó
+                    if (order.paymentStatus !== 'Paid') {
                         order.paymentStatus = 'Failed';
-                        // order.orderStatus = 'Đã hủy'; // Cân nhắc cập nhật cả trạng thái đơn hàng
+                        // Có thể cập nhật orderStatus nếu muốn
                         await order.save();
                         console.log(`VNPAY Return - Order ${orderId} updated to Failed.`);
                     }
                     message = 'Giao dịch thất bại';
-                    success = false;
                 }
             } else {
                 console.log(`VNPAY Return - Order ${orderId} not found.`);
                 message = 'Không tìm thấy đơn hàng';
-                success = false;
             }
-        } catch (dbError) {
-            console.error(`VNPAY Return - DB Error for Order ${orderId}:`, dbError);
+        } catch (err) {
+            console.error(`VNPAY Return - DB Error for Order ${orderId}:`, err);
             message = 'Lỗi cập nhật đơn hàng';
-            success = false;
         }
 
-        // Redirect về trang frontend với tham số
-        redirectUrl += `?success=${success}&orderId=${orderId}&message=${encodeURIComponent(message)}&rspCode=${rspCode}`;
-
+        if (success) {
+            return res.redirect(`${redirectUrl}/success?message=${encodeURIComponent(message)}`);
+        } else {
+            return res.redirect(`${redirectUrl}/failed?message=${encodeURIComponent(message)}`);
+        }
     } else {
-        console.log('VNPAY Return - Invalid Signature');
-        redirectUrl += `?success=false&message=${encodeURIComponent('Chữ ký không hợp lệ')}`;
+        console.log(`VNPAY Return - Invalid Signature. Expected: ${signed}, Received: ${secureHash}`);
+        message = 'Chữ ký không hợp lệ';
+        return res.redirect(`${redirectUrl}/failed?message=${encodeURIComponent(message)}`);
     }
-
-    // Redirect người dùng về trang frontend
-    res.redirect(redirectUrl);
 };
 
 // Hàm xử lý VNPAY IPN URL (Quan trọng hơn Return URL để xác nhận thanh toán)
@@ -186,7 +188,6 @@ export const vnpayIpn = async (req, res) => {
     let rspCode = vnp_Params['vnp_ResponseCode'];
     let vnpAmount = parseInt(vnp_Params['vnp_Amount']) / 100; // Lấy số tiền từ VNPAY
 
-    console.log(`VNPAY IPN Received - OrderId: ${orderId}, RspCode: ${rspCode}, Amount: ${vnpAmount}`);
 
     // Kiểm tra chữ ký
     if (secureHash === signed) {

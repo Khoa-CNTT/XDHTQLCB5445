@@ -99,15 +99,24 @@ const AccountManagement = () => {
       title: 'Tên tài khoản',
       key: 'fullName',
       render: (_, record) => `${record.firstName || ''} ${record.lastName || ''}`.trim(),
-    },
+    },  
     { title: 'Email', dataIndex: 'email', key: 'email' },
-    { title: 'Vai trò', dataIndex: 'role', key: 'role' },
+    { title: 'Vai trò', dataIndex: 'role', key: 'role' ,
+      filters: [
+        { text: 'Admin', value: 'admin' },
+        { text: 'Manager', value: 'manager' },
+        { text: 'Employee', value: 'employee' },
+        { text: 'User', value: 'user' },
+      ],
+      onFilter: (value, record) => record.role.includes(value),
+    },
     {
       title: 'Email Đã xác thực',
       dataIndex: 'isEmailVerified',
       key: 'isEmailVerified',
       render: v => v ? 'Đang hoạt động' : 'Đã bị chặn',
     },
+    
     {
       title: 'Hành động',
       key: 'action',
@@ -138,8 +147,8 @@ const AccountManagement = () => {
   return (
     <div className="mt-3">
       <h1>Quản lý tài khoản</h1>
-      <Button type="primary" onClick={() => setIsAddOpen(true)} className="mb-3 mr-3">
-        Thêm tài khoản nhân viên mới
+      <Button type="primary" onClick={() => setIsAddOpen(true)} className="mt-2 mb-3 mr-3">
+        Tạo tài khoản nhân viên mới
       </Button>
       
       <Input

@@ -31,6 +31,8 @@ import ProductsPage from './pages/ProductPage';
 import BlogPage from './pages/BlogPage';
 import Manager from './pages/Manager';
 import { CartProvider } from './context/CartContext';
+import { ToastContainerWrapper, Wrapper } from './utils/toast';
+import VnpayCheckout from './pages/VnpayCheckout';
 
 function App() {
   return (
@@ -52,15 +54,14 @@ function App() {
           <Route path="/blogview" element={<BlogViewer />} />
           <Route path="/blogpage" element={<BlogPage />} />
           <Route path="/service/:id" element={<ServiceDetailPage />} />
-          <Route path="/product/:id" element={<ProductDetailPage/>} />
-          <Route path="/search" element={<SearchResultPage />} />
+          <Route path="/product/:id" element={<ProductDetailPage/>}  />
           <Route path="*" element={<Page404 />} />
           {/* Router chỉ người dùng mới sử dụng được */}
           <Route path="/order-confirmation" element={<OrderConfirmation />} />
-          <Route path="/verify/success" element={ <StripeCheckout />} />   
+          <Route path="/verify/success" element={ <StripeCheckout />} /> 
+          <Route path="/payment-status/success" element={ <VnpayCheckout />} />     
           <Route path="/spvc" element={<SuperVouchers />} />
           <Route path="/payment" element={<Payment />} />
-          <Route path="/stripe-checkout" element={<StripeCheckout />} />
           <Route path="/book-service/:id" element={<PrivateRoute element={<BookServicePage/>} requiredRole="user" />} />  
           <Route path="/myvc" element={<PrivateRoute element={<MyVouchers />} requiredRole="user" />} />
           <Route path="/cart" element={<PrivateRoute element={<Cart />} requiredRole="user" />} />
@@ -73,6 +74,7 @@ function App() {
         </Routes>    
       </AuthProvider>
      </CartProvider>
+      <ToastContainerWrapper />
 
     </>
   );

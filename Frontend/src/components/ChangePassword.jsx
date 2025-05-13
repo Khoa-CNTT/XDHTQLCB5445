@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { changePassword } from '../APIs/userApi';
-import { errorToast, successToast, toastContainer } from '../utils/toast';
+import { errorToast, successToast,  } from '../utils/toast';
 
 function ChangePasswordTab() {
   const [oldPassword, setOldPassword] = useState('');
@@ -69,7 +69,7 @@ function ChangePasswordTab() {
 
   return (
     <div className="max-w-xl mx-auto p-6 bg-white rounded-2xl shadow-md border border-pink-100 space-y-6">
-      {toastContainer()}
+      
       <h2 className="text-2xl font-semibold text-gray-800">🔒 Đổi Mật Khẩu</h2>
 
       <div className="space-y-4">

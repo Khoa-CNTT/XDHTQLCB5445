@@ -88,7 +88,7 @@ const SlideBannerManagement = () => {
 
   const handleSubmit = async (values) => {
     if (!editingSlide && !image) {
-      message.warning("Vui lòng chọn hình ảnh cho slide!");
+      message.error("Vui lòng chọn hình ảnh cho slide!");
       return;
     }
     const slideData = {

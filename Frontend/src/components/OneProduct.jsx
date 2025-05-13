@@ -79,7 +79,7 @@ const OneProduct = ({
         </h3>
         <p className="text-black mt-2 truncate max-w-xs">{description}</p>
         <div className="flex justify-between items-center mt-4">
-          <span className="text-black font-bold">Giá: {price} VNĐ</span>
+          <span className="text-black font-bold">Giá: {price.toLocaleString()} VNĐ</span>
         </div>
       </div>
     </div>

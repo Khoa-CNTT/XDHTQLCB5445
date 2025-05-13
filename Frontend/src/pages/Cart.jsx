@@ -21,13 +21,13 @@ import {
   clearCart,
 } from "../APIs/cartApi";
 import { getProducts } from "../APIs/ProductsApi";
-import { errorToast, successToast, toastContainer } from "../utils/toast";
+import { errorToast, successToast } from "../utils/toast";
 import axios from "axios";
 import Header from "../components/Header";
 import { CartContext } from "../context/CartContext";
 
 // const API_BASE_URL = "https://backend-fu3h.onrender.com/api/";
-const API_BASE_URL = "http://localhost:4000/api";
+const API_BASE_URL = "http://localhost:4000/api"; // Replace with your local URL
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -154,19 +154,6 @@ const Cart = () => {
         : [...prevSelected, productId]
     );
   };
-
-  const handleSelectAll = () => {
-    const allProductIds = products
-      .filter((product) => cartItems[product._id])
-      .map((product) => product._id);
-
-    if (selectedItems.length === allProductIds.length) {
-      setSelectedItems([]); // Bỏ chọn tất cả
-    } else {
-      setSelectedItems(allProductIds); // Chọn tất cả
-    }
-  };
-
   const subtotal = products.reduce((total, product) => {
     if (!selectedItems.includes(product._id)) return total;
     const quantity = cartItems[product._id] || 0;
@@ -272,7 +259,6 @@ const Cart = () => {
     <>
       <Header className="!bg-white !text-black !shadow-md" />
       <div className="p-4 mt-[60px] w-full bg-gray-50 border border-gray-200">
-        {toastContainer()}
         <Card className="w-full max-w-5xl mx-auto">
           <div className="p-4 flex flex-col md:flex-row">
             <div className="w-full md:w-2/3 space-y-4">
@@ -361,9 +347,7 @@ const Cart = () => {
                   )
               )}
               <div className="flex items-center p-3 bg-slate-300">
-                <p className="flex bg-slate-300">
-                  Tổng sản phẩm: {totalQuantity}
-                </p>
+                <p className="flex bg-slate-300">Tổng sản phẩm: {totalQuantity}</p>
                 <Button
                   type="link"
                   className="text-blue-500 hover:text-blue-700"

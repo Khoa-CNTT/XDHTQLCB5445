@@ -25,24 +25,23 @@ const OrderManagement = () => {
   // ===== Options =====
   const orderStatusOptions = [
     { value: "Đang xử lý", label: "Đang xử lý" },
-    { value: "Đã xác nhận", label: "Đã xác nhận" },
-    { value: "Đã giao", label: "Đã giao" },
+    { value: "Đã thanh toán", label: "Đã thanh toán" },
     { value: "Đang giao", label: "Đang giao" },
     { value: "Đã hủy", label: "Đã hủy" },
+    { value: "Đã hoàn tiền", label: "Đã hoàn tiền" },
   ];
 
   const paymentStatusTag = (status) => {
     const colorMap = {
       "Đang xử lý": "orange",
-      "Đã xác nhận": "green",
-      "Đã giao": "blue",
+      "Đã thanh toán": "green",
       "Đang giao": "blue",
       "Đã hủy": "red",
+      "Hoàn tiền": "cyan",
     };
     const labelMap = {
       "Đang xử lý": "Chờ thanh toán",
-      "Đã xác nhận": "Đã thanh toán",
-      "Đã giao": "Đã giao",
+      "Đã thanh toán": "Đã thanh toán",
       "Đang giao": "Đang giao",
       "Đã hủy": "Đã hủy",
       "Hoàn tiền": "Đã hoàn tiền",
@@ -182,7 +181,7 @@ const OrderManagement = () => {
     },
     {
       title: "Thanh toán",
-      dataIndex: "paymentStatus",
+      dataIndex: "paymentStatus", 
       key: "paymentStatus",
       width: 150,
       render: paymentStatusTag,
