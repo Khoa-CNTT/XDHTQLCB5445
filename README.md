@@ -8,11 +8,11 @@ Dự án: Xây dựng hệ thống quản lý chuỗi beauty spa tích hợp AI 
 ```
 | STT | Họ và Tên         | Mã Số Sinh Viên   | Vai Trò Trong Dự Án              |
 |-----|-------------------|-------------------|----------------------------------|
-| 1   | Đỗ Cao Thắng      | 123456789         | Trưởng nhóm, Backend, tài liệu   |
-| 2   | Huỳnh Hồng Sơn    | 987654321         | Frontend, tài liệu               |
-| 3   | Lê Ngọc Thanh Nam | 112233445         | Frontend, tài liệu               |
-| 4   | Võ Duy Thuyết     | 556677889         | Frontend, tài liệu               |
-| 5   | Trần Văn Tín      | 998877665         | Backend, tài liệu                |
+| 1   | Đỗ Cao Thắng      | 27211245445       | Trưởng nhóm, Backend, tài liệu   |
+| 2   | Huỳnh Hồng Sơn    | 27211321114       | Frontend, tài liệu               |
+| 3   | Lê Ngọc Thanh Nam | 27211221939       | Frontend, tài liệu               |
+| 4   | Võ Duy Thuyết     | 27211241307       | Frontend, tài liệu               |
+| 5   | Trần Văn Tín      | 27211252815       | Backend, tài liệu                |
 
 
 
