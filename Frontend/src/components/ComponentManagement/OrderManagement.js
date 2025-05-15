@@ -22,7 +22,6 @@ const OrderManagement = () => {
   });
   const [userFullName, setUserFullName] = useState("Không rõ");
 
-  // ===== Options =====
   const orderStatusOptions = [
     { value: "Đang xử lý", label: "Đang xử lý" },
     { value: "Đã thanh toán", label: "Đã thanh toán" },
@@ -144,12 +143,7 @@ const OrderManagement = () => {
       title: "Mã đơn hàng",
       dataIndex: "_id",
       key: "_id",
-      render: (id) => id ? `${id.substring(0, 8)}...` : "Không rõ",
-      filters: state.orders.map(order => ({
-        text: order._id ? `${order._id.substring(0, 8)}...` : "Không rõ",
-        value: order._id
-      })),
-      onFilter: (value, record) => record._id === value,
+      render: (id) => id ? `${id.substring(0, 8)}` : "Không rõ",
     },
     {
       title: "Tổng tiền",

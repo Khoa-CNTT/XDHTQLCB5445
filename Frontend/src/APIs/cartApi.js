@@ -24,20 +24,28 @@ export const clearCart = async () => {
     return response.data;
 };
 
-// Thêm sản phẩm vào giỏ hàng
 export const addToCart = async (itemId, quantity) => {
-  const token = localStorage.getItem("token");
-  
-  const response = await axios.post(
-    `${API_URL}/cart/add`,  // Đảm bảo rằng API của bạn đã xử lý yêu cầu này.
-    { itemId, quantity },   // Gửi cả itemId và quantity lên backend.
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
-  return response.data;
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("Người dùng chưa đăng nhập.");
+
+    const response = await axios.post(
+      `${API_URL}/cart/add`,
+      { itemId, quantity },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data; // { success: true, message: "...", ... }
+  } catch (error) {
+    // Xử lý lỗi từ backend hoặc mạng
+    const message =
+      error.response?.data?.message || error.message || "Lỗi không xác định!";
+    throw new Error(message);
+  }
 };
 
 

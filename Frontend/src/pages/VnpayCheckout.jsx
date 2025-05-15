@@ -27,11 +27,12 @@ const VnpayCheckout = () => {
         '00': 'Giao dịch thành công.',
     };
 
-    useEffect(() => {
-        // Có thể gọi API để xác nhận lại trạng thái đơn hàng tại đây nếu cần
-    }, [success, message, orderId, rspCode]);
       const handleOrderTab = () => {
-    navigate('/profile', { state: { tab: 'orders' } });
+        navigate('/profile', {
+                state: {
+                    activeTab: 'myorders',
+                },
+            });
   }
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4 text-center mt-[-60px]">
@@ -58,13 +59,11 @@ const VnpayCheckout = () => {
                     </p>
                 )}
 
-                <div className="space-y-3">
-                    {orderId && (
-                        <Button type="primary" onClick={handleOrderTab}>
+               <div className="space-y-3 flex flex-col items-center mt-4">
+                        <Button className='bg-blue-400 flex  p-1' type="primary" onClick={handleOrderTab}>
                             Hãy bấm vào tôi để xem đơn hàng của bạn
                         </Button>
-                    )}
-                    <Button onClick={() => navigate('/')}>
+                    <Button className='bg-blue-400 p-1 ' type="primary" onClick={() => navigate('/')}>
                         Về trang chủ
                     </Button>
                 </div>

@@ -98,7 +98,7 @@ const Admin = () => {
       case 'category':
         return <CategoryManagement />;
       default:
-        return <Dashboard />;
+    //  return <Dashboard />;
     }
   };
 

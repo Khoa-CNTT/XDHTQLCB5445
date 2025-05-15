@@ -116,7 +116,19 @@ const AccountManagement = () => {
       key: 'isEmailVerified',
       render: v => v ? 'Đang hoạt động' : 'Đã bị chặn',
     },
-    
+    {
+      title: 'Ngày tạo',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (text) => {
+        const date = new Date(text);
+        return date.toLocaleDateString('vi-VN', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+        });
+      },  
+    },
     {
       title: 'Hành động',
       key: 'action',

@@ -104,6 +104,9 @@ export const ReviewSP = ({ onAddReview }) => {
       const res = await addReviewSP(reviewData);
       if (res.success) {
         successToast("Đánh giá thành công!");
+        setTimeout(() => {
+          window.location.href = "/sign-in";
+        }, 2000);
         onAddReview();
         setRating(0);
         setComment('');

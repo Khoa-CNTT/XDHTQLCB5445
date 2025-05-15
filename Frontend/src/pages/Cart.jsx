@@ -131,6 +131,8 @@ const Cart = () => {
     await addToCart(productID, quantity);
     fetchData();
   };
+  const totalSelectedQuantity = Object.values(cartItems).filter(item => item.selected).reduce((sum, item) => sum + item.quantity, 0);
+
 
   const handleRemoveFromCart = async (productID) => {
     await removeFromCart(productID);
@@ -242,15 +244,24 @@ const Cart = () => {
     if (cartItems[id]) selectedCartItems[id] = cartItems[id];
   });
 
-  const handleCheckout = () => {
-    if (selectedItems.length === 0) {
-      errorToast("Vui lòng chọn ít nhất một sản phẩm để thanh toán");
-      return;
-    }
-    navigate("/payment", {
-      state: { cartItems: selectedCartItems, products, selectedVoucher },
-    });
-  };
+const handleCheckout = () => {
+  if (selectedItems.length === 0) {
+    errorToast("Vui lòng chọn ít nhất một sản phẩm để thanh toán");
+    return;
+  }
+  const selectedCartItems = {};
+  selectedItems.forEach((id) => {
+    if (cartItems[id]) selectedCartItems[id] = cartItems[id];
+  });
+
+  navigate("/payment", {
+    state: { 
+      cartItems: selectedCartItems, 
+      products: products.filter(p => selectedItems.includes(p._id)),
+      selectedVoucher 
+    },
+  });
+};
 
   if (loading) return <div>Đang tải...</div>;
   if (error) return <div>{error}</div>;
@@ -418,7 +429,7 @@ const Cart = () => {
                   onClick={handleCheckout}
                   disabled={subtotal === 0}
                 >
-                  Mua Hàng ({Object.keys(cartItems).length} sản phẩm)
+                  Mua Hàng ({totalQuantity} sản phẩm)
                 </Button>
               </div>
             </div>

@@ -105,6 +105,9 @@ export const ReviewDV = ({ setLoading, onReviewSubmitted }) => {
       const res = await addReviewDV(reviewData);
       if (res.success) {
         successToast("Gửi đánh giá thành công!");
+        setTimeout(() => {
+          window.location.href = "/sign-in";
+        }, 2000);
         setRating(0);
         setComment('');
         if (onReviewSubmitted) {

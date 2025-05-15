@@ -45,13 +45,7 @@ const BlogViewer = () => {
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
-
   const handleBlog = () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      errorToast(t("blog.pleaseLogin")); // Dịch thông báo yêu cầu đăng nhập
-      return;
-    }
     navigate("/blogpage");
   };
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Card, Button, Divider, Typography, Image, Steps } from 'antd';
 import { CheckCircle, Home, ShoppingBag } from 'lucide-react';
@@ -37,8 +37,9 @@ const OrderConfirmation = () => {
     const navigate = useNavigate();
     const { orderDetails } = location.state || {};
     const order = orderDetails;
-    console.log('Order Details:', order);
-
+     useEffect(() => {
+    localStorage.removeItem("cart");
+  }, []);
     const subtotal = order.items.reduce((sum, item) => {
         const rawPrice = item.PricePD || item.price || '0';
         const parsedPrice = parseFloat(String(rawPrice).replace(/\./g, '').replace(',', '.')) || 0;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { FaStar } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
 import { getProductById } from "../APIs/ProductsApi";
@@ -6,6 +6,8 @@ import { listReviewSP } from "../APIs/ReviewSPAPI";
 import { RightOutlined } from "@ant-design/icons";
 import { addToCart, decreaseToCart } from "../APIs/cartApi";
 import { errorToast, successToast,  } from "../utils/toast";
+import { useTranslation } from "react-i18next";
+import { CartContext } from "../context/CartContext";
 
 const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
@@ -14,6 +16,8 @@ const ProductDetail = () => {
   const [reviewCount, setReviewCount] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
   const { id } = useParams();
+  const { t } = useTranslation();
+  const { fetchCartCount } = useContext(CartContext);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -45,15 +49,29 @@ const ProductDetail = () => {
   }, [id]);
 
   const handleAddToCart = async (productId, quantity) => {
-    try {
-      const res = await addToCart(productId, quantity);
-      if (res.success) {
-        window.dispatchEvent(new Event("cartUpdated"));
-        successToast("Sản phẩm đã được thêm vào giỏ hàng!");
-      }
-    } catch (error) {
-      errorToast("Vui lòng đăng nhập để thêm vào giỏ hàng");
+      try {
+        const role = localStorage.getItem("role");
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      errorToast(t("products.pleaseLogin"));
+      setTimeout(() => {
+        window.location.href = "/sign-in";
+      }, 2000);
+      return;
     }
+    if (role !== "user") {
+      errorToast(t("products.onlyUsersCanOrder"));
+      return;
+    }
+    const res = await addToCart(productId, quantity);
+    if (res?.success) {
+      successToast(t("products.addToCartSuccess"));
+      fetchCartCount();
+    }
+  } catch (error) {
+      errorToast(t("products.outOfStock"));
+  }
   };
   const handleQuantityChange = (e) => {
     let value = parseInt(e.target.value);
@@ -72,7 +90,7 @@ const ProductDetail = () => {
       try {
         await decreaseToCart(productId);
       } catch (error) {
-        
+        errorToast("Không thể giảm số lượng nhỏ hơn 1");
       }
     }
   };

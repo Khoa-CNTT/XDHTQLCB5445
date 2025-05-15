@@ -74,7 +74,7 @@ const Manager = () => {
       case 'category':
         return <CategoryManagement />;
       default:
-        return <Dashboard />;
+        // return <Dashboard />;
     }
   };
 
