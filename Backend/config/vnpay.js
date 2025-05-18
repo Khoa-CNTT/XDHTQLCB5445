@@ -1,4 +1,3 @@
-// config/vnpay.js
 import crypto from 'crypto';
 
 class VNPay {
